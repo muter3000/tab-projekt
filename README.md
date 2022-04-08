@@ -5,6 +5,6 @@
   docker-compose up
 <b>PgAdmin</b><br>
   PgAdmin działa na localhost:5050, nie musicie go instalować<br>
-<b>Dodanie bazy danych</b>
+<b>Dodanie bazy danych</b><br>
   Dodajecie serwer przez connection na adres "postgres:5432" login: admin hasło: admin2137
 
