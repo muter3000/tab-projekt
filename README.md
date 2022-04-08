@@ -1,2 +1,2 @@
-# tab-projekt
-projetk w pytke
+# tabprojekt
+projekt w pytke
