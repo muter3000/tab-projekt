@@ -1,8 +1,8 @@
 # tabprojekt
-<b>Jak zainstalować? Dobre pytanie</b><br>
+<b>Jak zainstalować?</b><br>
   Docker desktop: https://docs.docker.com/desktop/windows/install/<br>
-<b>Jak wystartować? Też całkiem niezłe</b><br>
-  docker-compose up
+<b>Jak wystartować?</b><br>
+  docker-compose up<br>
 <b>PgAdmin</b><br>
   PgAdmin działa na localhost:5050, nie musicie go instalować<br>
 <b>Dodanie bazy danych</b><br>
