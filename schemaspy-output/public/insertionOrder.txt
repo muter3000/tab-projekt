@@ -1,0 +1,11 @@
+kierowcy
+kategoria_prawa_jazdy
+marka
+stanowisko_administracyjne
+trasa
+pojazd
+administracja
+pojazd_ciezarowy
+kategoria_kierowcy
+kurs
+pracownicy

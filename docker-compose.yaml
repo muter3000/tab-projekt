@@ -8,6 +8,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin2137}
       PGDATA: /data/postgres
+      POSTGRES_HOST_AUTH_METHOD: password
     volumes:
        - ./postgres:/data/postgres
     ports:
@@ -25,12 +26,23 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
        - ./pgadmin:/var/lib/pgadmin
+       - ./sqlfiles:/home/sqlfiles
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
       - postgres
     restart: unless-stopped
-
+  schemaspy:
+    container_name: schemaspy_container
+    image: schemaspy/schemaspy
+    command: -configFile /config/schemaspy.properties -noimplied -nopages -l
+    volumes:
+      - ./schemaspy-output:/output
+      - ./schemaspy-config:/config
+    depends_on:
+      - postgres
+    networks:
+      - postgres
 networks:
   postgres:
     driver: bridge

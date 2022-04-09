@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="pojazdy" schema="public" type="PostgreSQL - 14.2 (Debian 14.2-1.pgdg110+1)">
+   <sequences>
+      <sequence increment="1" name="administracja_administracja_id_seq" startValue="1"/>
+      <sequence increment="1" name="kategoria_prawa_jazdy_id_seq" startValue="1"/>
+      <sequence increment="1" name="kierowcy_kierowcy_id_seq" startValue="1"/>
+      <sequence increment="1" name="marka_id_seq" startValue="1"/>
+      <sequence increment="1" name="pojazd_id_seq" startValue="1"/>
+      <sequence increment="1" name="pracownicy_id_seq" startValue="1"/>
+      <sequence increment="1" name="stanowisko_administracyjne_id_seq" startValue="1"/>
+      <sequence increment="1" name="trasa_id_seq" startValue="1"/>
+   </sequences>
+   <tables>
+      <table name="administracja" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('pracownicy_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="pesel" nullable="true" remarks="" size="11" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="imie" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="nazwisko" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="true" defaultValue="nextval('administracja_administracja_id_seq'::regclass)" digits="0" id="4" name="administracja_id" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="login" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="haslo" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="stanowisko_administracyjne_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="administracja_stanowisko_administracyjne_fk" implied="false" onDeleteCascade="false" schema="public" table="stanowisko_administracyjne"/>
+         </column>
+         <primaryKey column="administracja_id" sequenceNumberInPK="1"/>
+         <index name="administracja_pkey" unique="true">
+            <column ascending="true" name="administracja_id"/>
+         </index>
+      </table>
+      <table name="kategoria_kierowcy" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="kierowcy_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="kierowcy_id" foreignKey="fk_ass_2" implied="false" onDeleteCascade="false" schema="public" table="kierowcy"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="kategoria_prawa_jazdy_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="fk_ass_3" implied="false" onDeleteCascade="false" schema="public" table="kategoria_prawa_jazdy"/>
+         </column>
+         <primaryKey column="kierowcy_id" sequenceNumberInPK="1"/>
+         <primaryKey column="kategoria_prawa_jazdy_id" sequenceNumberInPK="2"/>
+         <index name="kategoria_kierowcy_pk" unique="true">
+            <column ascending="true" name="kierowcy_id"/>
+            <column ascending="true" name="kategoria_prawa_jazdy_id"/>
+         </index>
+      </table>
+      <table name="kategoria_prawa_jazdy" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="kategoria" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="true" defaultValue="nextval('kategoria_prawa_jazdy_id_seq'::regclass)" digits="0" id="1" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="kategoria_prawa_jazdy_id" foreignKey="fk_ass_3" implied="false" onDeleteCascade="false" schema="public" table="kategoria_kierowcy"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="kategoria_prawa_jazdy_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="kierowcy" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('pracownicy_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="pesel" nullable="true" remarks="" size="11" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="imie" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="nazwisko" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="true" defaultValue="nextval('kierowcy_kierowcy_id_seq'::regclass)" digits="0" id="4" name="kierowcy_id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="kierowcy_id" foreignKey="fk_ass_2" implied="false" onDeleteCascade="false" schema="public" table="kategoria_kierowcy"/>
+            <child column="kierowcy_id" foreignKey="kurs_kierowcy_fk" implied="false" onDeleteCascade="false" schema="public" table="kurs"/>
+         </column>
+         <primaryKey column="kierowcy_id" sequenceNumberInPK="1"/>
+         <index name="kierowcy_pkey" unique="true">
+            <column ascending="true" name="kierowcy_id"/>
+         </index>
+      </table>
+      <table name="kurs" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="data_rozpoczecia" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="data_zakonczenia" nullable="true" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="17" id="2" name="czas_przejazdu" nullable="true" remarks="" size="17" type="float8" typeCode="8"/>
+         <column autoUpdated="false" defaultValue="null" digits="17" id="3" name="ladunek" nullable="true" remarks="" size="17" type="float8" typeCode="8"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="trasa_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="kurs_trasa_fk" implied="false" onDeleteCascade="false" schema="public" table="trasa"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="kierowcy_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="kierowcy_id" foreignKey="kurs_kierowcy_fk" implied="false" onDeleteCascade="false" schema="public" table="kierowcy"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="pojazd_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="kurs_pojazd_fk" implied="false" onDeleteCascade="false" schema="public" table="pojazd"/>
+         </column>
+         <primaryKey column="trasa_id" sequenceNumberInPK="1"/>
+         <primaryKey column="kierowcy_id" sequenceNumberInPK="2"/>
+         <primaryKey column="pojazd_id" sequenceNumberInPK="3"/>
+         <index name="kurs_pk" unique="true">
+            <column ascending="true" name="trasa_id"/>
+            <column ascending="true" name="kierowcy_id"/>
+            <column ascending="true" name="pojazd_id"/>
+         </index>
+      </table>
+      <table name="marka" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="nazwa" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="true" defaultValue="nextval('marka_id_seq'::regclass)" digits="0" id="1" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="marka_id" foreignKey="pojazd_marka_fk" implied="false" onDeleteCascade="false" schema="public" table="pojazd"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="marka_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="pojazd" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="numer_silnika" nullable="true" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="pojemnosc_silnika" nullable="true" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="marka_id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="pojazd_marka_fk" implied="false" onDeleteCascade="false" schema="public" table="marka"/>
+         </column>
+         <column autoUpdated="true" defaultValue="nextval('pojazd_id_seq'::regclass)" digits="0" id="3" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="pojazd_id" foreignKey="kurs_pojazd_fk" implied="false" onDeleteCascade="false" schema="public" table="kurs"/>
+            <child column="id" foreignKey="pojazd_ciezarowy_pojazd_fk" implied="false" onDeleteCascade="false" schema="public" table="pojazd_ciezarowy"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pojazd_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="pojazd_ciezarowy" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="numer_silnika" nullable="true" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="pojemnosc_silnika" nullable="true" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="marka_id" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="true" defaultValue="nextval('pojazd_id_seq'::regclass)" digits="0" id="3" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <parent column="id" foreignKey="pojazd_ciezarowy_pojazd_fk" implied="false" onDeleteCascade="false" schema="public" table="pojazd"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="17" id="4" name="ladownosc" nullable="true" remarks="" size="17" type="float8" typeCode="8"/>
+      </table>
+      <table name="pracownicy" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('pracownicy_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="pesel" nullable="true" remarks="" size="11" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="imie" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="nazwisko" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pracownicy_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="stanowisko_administracyjne" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="typ" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="true" defaultValue="nextval('stanowisko_administracyjne_id_seq'::regclass)" digits="0" id="1" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="stanowisko_administracyjne_id" foreignKey="administracja_stanowisko_administracyjne_fk" implied="false" onDeleteCascade="false" schema="public" table="administracja"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="stanowisko_administracyjne_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="trasa" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="miejscowosc_poczatkowa" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="miejscowosc_koncowa" nullable="true" remarks="" size="4000" type="varchar" typeCode="12"/>
+         <column autoUpdated="true" defaultValue="nextval('trasa_id_seq'::regclass)" digits="0" id="2" name="id" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="trasa_id" foreignKey="kurs_trasa_fk" implied="false" onDeleteCascade="false" schema="public" table="kurs"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="trasa_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+   </tables>
+</database>
