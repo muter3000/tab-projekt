@@ -11,5 +11,5 @@
 <b>Dodanie bazy danych</b>
 <p>Dodajecie serwer przez connection na adres "postgres:5432" login: admin hasło: admin2137</p><br>
 <b>Wygenerowanie schematu</b>
-<p>Schemat generaujemy startując kontener z SchemaSpy -> output w schemaspy-output</p>
-
+<p>Schemat generaujemy startując kontener z SchemaSpy -> output w schemaspy-output</p><br>
+<b>Połączenie z node na port 30050!</b>
