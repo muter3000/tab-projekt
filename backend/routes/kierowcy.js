@@ -21,6 +21,8 @@ router.get('/:id', async (req, res) => {
 
     try {
         const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE id = $1', [id])
+
+        if (specificDriver.rows.length === 0) return res.sendStatus(404)
         
         return res.status(200).json(specificDriver.rows[0])
     }
@@ -92,10 +94,12 @@ router.put('/', async (req, res) => {
 })
 
 router.patch('/', async (req, res) => {
-    if (!!req.body.pesel && req.body.pesel.length !== 11) return res.sendStatus(400)
+    if (typeof req.body.id !== 'number' || !!req.body.pesel && req.body.pesel.length !== 11) return res.sendStatus(400)
 
     try {
         const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE id = $1', [req.body.id])
+
+        if (specificDriver.rows.length === 0) return res.sendStatus(404)
 
         const { id, pesel, imie, nazwisko } = {...specificDriver.rows[0], ...req.body}
 
