@@ -9,6 +9,10 @@ app.use(cors({
     origin: '*'
 }))
 
+const kierowcy = require('./routes/kierowcy')
+
+app.use('/kierowcy', kierowcy);
+
 app.listen(PORT, () => {
     console.log(`server is listening on port ${PORT}`)
 })
