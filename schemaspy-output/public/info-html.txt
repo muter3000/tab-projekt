@@ -1,4 +1,4 @@
-date=2022-04-09 11:17:56+0000
+date=2022-04-09 12:17:39+0000
 os=Linux 5.10.16.3-microsoft-standard-WSL2
 schemaspy-version=6.1.0
 schemaspy-build=6.1.0.41 2019-09-17 21:52:57
