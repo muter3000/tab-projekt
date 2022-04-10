@@ -5,7 +5,7 @@ class Pool {
         throw new Error('Use Singleton.getInstance()');
     }
     static getInstance() {
-        const host = process.env.PSQL_HOST ?? localhost
+        const host = process.env.PSQL_HOST ?? "localhost"
         const port = process.env.PSQL_PORT ?? 30050
         if (!Pool.instance) {
             Pool.instance = new PostgresPool({
