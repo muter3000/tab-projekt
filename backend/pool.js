@@ -5,8 +5,8 @@ class Pool {
         throw new Error('Use Singleton.getInstance()');
     }
     static getInstance() {
-        if (!Singleton.instance) {
-            Singleton.instance = new PostgresPool({
+        if (!Pool.instance) {
+            Pool.instance = new PostgresPool({
                 user: "admin",
                 password: "admin2137",
                 database: "postgres",
@@ -14,7 +14,7 @@ class Pool {
                 port: 30050
             })
         }
-        return Singleton.instance;
+        return Pool.instance;
     }
 }
 
