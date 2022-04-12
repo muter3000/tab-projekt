@@ -81,8 +81,8 @@ router.put('/', async (req, res) => {
             [pesel, imie, nazwisko, login, haslo])
         }
         else {
-            putDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE id = $4 RETURNING *',
-            [pesel, imie, nazwisko, id, login, haslo])
+            putDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE id = $6 RETURNING *',
+            [pesel, imie, nazwisko, login, haslo, id])
         }
         
         return res.status(200).json(putDriver.rows[0])
@@ -94,7 +94,7 @@ router.put('/', async (req, res) => {
 })
 
 router.patch('/', async (req, res) => {
-    if (typeof req.body.id !== 'number' || !!req.body.pesel && req.body.pesel.length !== 11) return res.sendStatus(400)
+    if (typeof req.body.id !== 'number' || (!!req.body.pesel && req.body.pesel.length !== 11)) return res.sendStatus(400)
 
     try {
         const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE id = $1', [req.body.id])
@@ -103,8 +103,8 @@ router.patch('/', async (req, res) => {
 
         const { id, pesel, imie, nazwisko, login, haslo } = {...specificDriver.rows[0], ...req.body}
 
-        const updatedDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE id = $4 RETURNING *',
-        [pesel, imie, nazwisko, id, login, haslo])
+        const updatedDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE id = $6 RETURNING *',
+        [pesel, imie, nazwisko, login, haslo, id])
 
         return res.status(200).json(updatedDriver.rows[0])
     }
