@@ -49,7 +49,9 @@ CREATE TABLE Pracownicy
     id       SERIAL PRIMARY KEY ,
     PESEL    VARCHAR (11) ,
     imie     VARCHAR (4000) ,
-    nazwisko VARCHAR (4000)
+    nazwisko VARCHAR (4000) ,
+    login         VARCHAR (4000) ,
+    haslo         VARCHAR (4000)
   ) ;
 
 -- check
@@ -79,8 +81,6 @@ CREATE TABLE Trasa
 CREATE TABLE Administracja
   (
     Administracja_ID SERIAL PRIMARY KEY ,
-    login         VARCHAR (4000) ,
-    haslo         VARCHAR (4000) ,
     Stanowisko_Administracyjne_ID INTEGER NOT NULL
   ) INHERITS (Pracownicy) ;
 
@@ -115,67 +115,67 @@ ALTER TABLE Pojazd ADD CONSTRAINT Pojazd_Marka_FK FOREIGN KEY ( Marka_ID ) REFER
 
 
 
---CREATE SEQUENCE Administracja_ID_SEQ
---   OWNED BY Administracja.Administracja_ID;
---
---ALTER TABLE Administracja
---   ALTER Administracja_ID
---      SET DEFAULT nextval('Administracja_ID_SEQ'::regclass);
+CREATE SEQUENCE Administracja_ID_SEQ
+   OWNED BY Administracja.Administracja_ID;
 
---CREATE SEQUENCE Kierowcy_ID_SEQ
---   OWNED BY Kierowcy.Kierowcy_ID;  
+ALTER TABLE Administracja
+   ALTER Administracja_ID
+      SET DEFAULT nextval('Administracja_ID_SEQ'::regclass);
 
---ALTER TABLE Kierowcy
---   ALTER Kierowcy_ID
---      SET DEFAULT nextval('Kierowcy_ID_SEQ'::regclass);
+CREATE SEQUENCE Kierowcy_ID_SEQ
+   OWNED BY Kierowcy.Kierowcy_ID;  
 
---CREATE SEQUENCE Kategoria_Prawa_Jazdy_ID_SEQ
---   OWNED BY Kategoria_Prawa_Jazdy.id;
+ALTER TABLE Kierowcy
+   ALTER Kierowcy_ID
+      SET DEFAULT nextval('Kierowcy_ID_SEQ'::regclass);
 
---ALTER TABLE Kategoria_Prawa_Jazdy
---   ALTER id
---      SET DEFAULT nextval('Kategoria_Prawa_Jazdy_ID_SEQ'::regclass);
+CREATE SEQUENCE Kategoria_Prawa_Jazdy_ID_SEQ
+   OWNED BY Kategoria_Prawa_Jazdy.id;
 
-
---CREATE SEQUENCE Kierowcy_ID_SEQ
---   OWNED BY Kierowcy.id;
-
---ALTER TABLE Kierowcy
---   ALTER id
---      SET DEFAULT nextval('Kierowcy_ID_SEQ'::regclass);
+ALTER TABLE Kategoria_Prawa_Jazdy
+   ALTER id
+      SET DEFAULT nextval('Kategoria_Prawa_Jazdy_ID_SEQ'::regclass);
 
 
---CREATE SEQUENCE Marka_ID_SEQ
---   OWNED BY Kierowcy.id;
+CREATE SEQUENCE Kierowcy_ID_SEQ
+   OWNED BY Kierowcy.id;
 
---ALTER TABLE Marka
---   ALTER id
---      SET DEFAULT nextval('Marka_ID_SEQ'::regclass);
-
-
-
---CREATE SEQUENCE Pojazd_ID_SEQ
---   OWNED BY Pojazd.id;
-
---ALTER TABLE Pojazd
---   ALTER id
---      SET DEFAULT nextval('Pojazd_ID_SEQ'::regclass);
+ALTER TABLE Kierowcy
+   ALTER id
+      SET DEFAULT nextval('Kierowcy_ID_SEQ'::regclass);
 
 
---CREATE SEQUENCE Stanowisko_Administracyjne_ID_SEQ
---   OWNED BY Stanowisko_Administracyjne.id;
+CREATE SEQUENCE Marka_ID_SEQ
+   OWNED BY Kierowcy.id;
 
---ALTER TABLE Stanowisko_Administracyjne
---   ALTER id
---      SET DEFAULT nextval('Stanowisko_Administracyjne_ID_SEQ'::regclass);
+ALTER TABLE Marka
+   ALTER id
+      SET DEFAULT nextval('Marka_ID_SEQ'::regclass);
 
 
---CREATE SEQUENCE Trasa_ID_SEQ
---   OWNED BY Trasa.id;
 
---ALTER TABLE Trasa
---   ALTER id
---      SET DEFAULT nextval('Trasa_ID_SEQ'::regclass);
+CREATE SEQUENCE Pojazd_ID_SEQ
+   OWNED BY Pojazd.id;
+
+ALTER TABLE Pojazd
+   ALTER id
+      SET DEFAULT nextval('Pojazd_ID_SEQ'::regclass);
+
+
+CREATE SEQUENCE Stanowisko_Administracyjne_ID_SEQ
+   OWNED BY Stanowisko_Administracyjne.id;
+
+ALTER TABLE Stanowisko_Administracyjne
+   ALTER id
+      SET DEFAULT nextval('Stanowisko_Administracyjne_ID_SEQ'::regclass);
+
+
+CREATE SEQUENCE Trasa_ID_SEQ
+   OWNED BY Trasa.id;
+
+ALTER TABLE Trasa
+   ALTER id
+      SET DEFAULT nextval('Trasa_ID_SEQ'::regclass);
 
 
 -- Oracle SQL Developer Data Modeler Summary Report: 
