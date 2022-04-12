@@ -1,18 +1,8 @@
 FROM node
-
-# Create app directory
+RUN npm install -g nodemon
 WORKDIR /usr/src/app
-
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
-
-RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
-
-# Bundle app source
-COPY . .
-
-CMD [ "node", "index.js" ]
+COPY package*.json /usr/src/app/
+RUN npm install && mv /usr/src/app/node_modules /node_modules
+COPY . /usr/src/app
+EXPOSE 8080
+CMD [ "nodemon", "index.js" ]
