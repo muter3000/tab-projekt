@@ -14,13 +14,13 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/:id', async (req, res) => {
-    const id = parseInt(req.params.id)
+router.get('/:administracja_id', async (req, res) => {
+    const administracja_id = parseInt(req.params.administracja_id)
     
-    if (typeof id !== 'number') return res.sendStatus(400)
+    if (typeof administracja_id !== 'number') return res.sendStatus(400)
 
     try {
-        const specificAdministration = await pool.getInstance().query('SELECT * FROM administracja WHERE id = $1', [id])
+        const specificAdministration = await pool.getInstance().query('SELECT * FROM administracja WHERE administracja_id = $1', [administracja_id])
 
         if (specificAdministration.rows.length === 0) return res.sendStatus(404)
         
@@ -49,13 +49,13 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
-    const id = parseInt(req.params.id)
+router.delete('/:administracja_id', async (req, res) => {
+    const administracja_id = parseInt(req.params.administracja_id)
 
-    if (typeof id !== 'number') return res.sendStatus(400)
+    if (typeof administracja_id !== 'number') return res.sendStatus(400)
 
     try {
-        const deletedAdministration = await pool.getInstance().query('DELETE FROM administracja WHERE id = $1 RETURNING *', [id])
+        const deletedAdministration = await pool.getInstance().query('DELETE FROM administracja WHERE administracja_id = $1 RETURNING *', [administracja_id])
 
         if (deletedAdministration.rows.length === 0) return res.sendStatus(404)
 
@@ -68,12 +68,12 @@ router.delete('/:id', async (req, res) => {
 })
 
 router.put('/', async (req, res) => {
-    const { id, pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id } = req.body
+    const { administracja_id, pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id } = req.body
 
-    if (!stanowisko_administracyjne_id || !login || !haslo || !id || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
+    if (!stanowisko_administracyjne_id || !login || !haslo || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
 
     try {
-        const specificAdministration = await pool.getInstance().query('SELECT * FROM administracja WHERE id = $1', [id])
+        const specificAdministration = await pool.getInstance().query('SELECT * FROM administracja WHERE administracja_id = $1', [administracja_id])
         let putAdministration
 
         if (specificAdministration.rows.length === 0) {
@@ -81,8 +81,8 @@ router.put('/', async (req, res) => {
             [pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id])
         }
         else {
-            putAdministration = await pool.getInstance().query('UPDATE administracja SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5, stanowisko_administracyjne_id = $6 WHERE id = $7 RETURNING *',
-            [pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id, id])
+            putAdministration = await pool.getInstance().query('UPDATE administracja SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5, stanowisko_administracyjne_id = $6 WHERE administracja_id = $7 RETURNING *',
+            [pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id, administracja_id])
         }
         
         return res.status(200).json(putAdministration.rows[0])
@@ -94,17 +94,17 @@ router.put('/', async (req, res) => {
 })
 
 router.patch('/', async (req, res) => {
-    if (typeof req.body.id !== 'number' || (!!req.body.pesel && req.body.pesel.length !== 11)) return res.sendStatus(400)
+    if (typeof req.body.administracja_id !== 'number' || (!!req.body.pesel && req.body.pesel.length !== 11)) return res.sendStatus(400)
 
     try {
-        const specificAdministration = await pool.getInstance().query('SELECT * FROM administracja WHERE id = $1', [req.body.id])
+        const specificAdministration = await pool.getInstance().query('SELECT * FROM administracja WHERE administracja_id = $1', [req.body.administracja_id])
 
         if (specificAdministration.rows.length === 0) return res.sendStatus(404)
 
-        const { id, pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id } = {...specificAdministration.rows[0], ...req.body}
+        const { administracja_id, pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id } = {...specificAdministration.rows[0], ...req.body}
 
-        const updatedAdministration = await pool.getInstance().query('UPDATE administracja SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5, stanowisko_administracyjne_id = $6 WHERE id = $7 RETURNING *',
-        [pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id, id])
+        const updatedAdministration = await pool.getInstance().query('UPDATE administracja SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5, stanowisko_administracyjne_id = $6 WHERE administracja_id = $7 RETURNING *',
+        [pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id, administracja_id])
 
         return res.status(200).json(updatedAdministration.rows[0])
     }

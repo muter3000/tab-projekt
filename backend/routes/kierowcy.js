@@ -14,13 +14,13 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:kierowcy_id', async (req, res) => {
     const id = parseInt(req.params.id)
     
     if (typeof id !== 'number') return res.sendStatus(400)
 
     try {
-        const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE id = $1', [id])
+        const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE kierowcy_id = $1', [kierowcy_id])
 
         if (specificDriver.rows.length === 0) return res.sendStatus(404)
         
@@ -49,13 +49,13 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
-    const id = parseInt(req.params.id)
+router.delete('/:kierowcy_id', async (req, res) => {
+    const kierowcy_id = parseInt(req.params.kierowcy_id)
 
-    if (typeof id !== 'number') return res.sendStatus(400)
+    if (typeof kierowcy_id !== 'number') return res.sendStatus(400)
 
     try {
-        const deletedDriver = await pool.getInstance().query('DELETE FROM kierowcy WHERE id = $1 RETURNING *', [id])
+        const deletedDriver = await pool.getInstance().query('DELETE FROM kierowcy WHERE kierowcy_id = $1 RETURNING *', [kierowcy_id])
 
         if (deletedDriver.rows.length === 0) return res.sendStatus(404)
 
@@ -68,12 +68,12 @@ router.delete('/:id', async (req, res) => {
 })
 
 router.put('/', async (req, res) => {
-    const { id, pesel, imie, nazwisko, login, haslo } = req.body
+    const { kierowcy_id, pesel, imie, nazwisko, login, haslo } = req.body
 
-    if (!login || !haslo || !id || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
+    if (!login || !haslo || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
 
     try {
-        const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE id = $1', [id])
+        const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE kierowcy_id = $1', [kierowcy_id])
         let putDriver
 
         if (specificDriver.rows.length === 0) {
@@ -81,8 +81,8 @@ router.put('/', async (req, res) => {
             [pesel, imie, nazwisko, login, haslo])
         }
         else {
-            putDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE id = $6 RETURNING *',
-            [pesel, imie, nazwisko, login, haslo, id])
+            putDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE kierowcy_id = $6 RETURNING *',
+            [pesel, imie, nazwisko, login, haslo, kierowcy_id])
         }
         
         return res.status(200).json(putDriver.rows[0])
@@ -94,17 +94,17 @@ router.put('/', async (req, res) => {
 })
 
 router.patch('/', async (req, res) => {
-    if (typeof req.body.id !== 'number' || (!!req.body.pesel && req.body.pesel.length !== 11)) return res.sendStatus(400)
+    if (typeof req.body.kierowcy_id !== 'number' || (!!req.body.pesel && req.body.pesel.length !== 11)) return res.sendStatus(400)
 
     try {
-        const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE id = $1', [req.body.id])
+        const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE kierowcy_id = $1', [req.body.kierowcy_id])
 
         if (specificDriver.rows.length === 0) return res.sendStatus(404)
 
-        const { id, pesel, imie, nazwisko, login, haslo } = {...specificDriver.rows[0], ...req.body}
+        const { kierowcy_id, pesel, imie, nazwisko, login, haslo } = {...specificDriver.rows[0], ...req.body}
 
-        const updatedDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE id = $6 RETURNING *',
-        [pesel, imie, nazwisko, login, haslo, id])
+        const updatedDriver = await pool.getInstance().query('UPDATE kierowcy SET pesel = $1, imie = $2, nazwisko = $3, login = $4, haslo = $5 WHERE kierowcy_id = $6 RETURNING *',
+        [pesel, imie, nazwisko, login, haslo, kierowcy_id])
 
         return res.status(200).json(updatedDriver.rows[0])
     }
