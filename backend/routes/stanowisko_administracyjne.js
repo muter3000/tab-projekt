@@ -73,7 +73,9 @@ router.put('/', async (req, res) => {
     if (!id || !typ) return res.sendStatus(400)
 
     try {
-        const specificPosition = await pool.getInstance().query('SELECT * FROM stanowisko_administracyjne WHERE id = $1', [id])
+        const specificPosition = typeof id === 'number' ?
+            await pool.getInstance().query('SELECT * FROM stanowisko_administracyjne WHERE id = $1', [id]) :
+            {rows: []}
         let putPosition
 
         if (specificPosition.rows.length === 0) {
