@@ -70,10 +70,12 @@ router.delete('/:administracja_id', async (req, res) => {
 router.put('/', async (req, res) => {
     const { administracja_id, pesel, imie, nazwisko, login, haslo, stanowisko_administracyjne_id } = req.body
 
-    if (!stanowisko_administracyjne_id || !login || !haslo || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
+    if (!administracja_id || !stanowisko_administracyjne_id || !login || !haslo || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
 
     try {
-        const specificAdministration = await pool.getInstance().query('SELECT * FROM administracja WHERE administracja_id = $1', [administracja_id])
+        const specificAdministration =  typeof administracja_id === 'number' ? 
+            await pool.getInstance().query('SELECT * FROM administracja WHERE administracja_id = $1', [administracja_id]) :
+            {rows: []}
         let putAdministration
 
         if (specificAdministration.rows.length === 0) {

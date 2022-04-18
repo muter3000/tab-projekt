@@ -70,10 +70,12 @@ router.delete('/:kierowcy_id', async (req, res) => {
 router.put('/', async (req, res) => {
     const { kierowcy_id, pesel, imie, nazwisko, login, haslo } = req.body
 
-    if (!login || !haslo || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
+    if (!kierowcy_id || !login || !haslo || !pesel || !imie || !nazwisko || pesel.length !== 11) return res.sendStatus(400)
 
     try {
-        const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE kierowcy_id = $1', [kierowcy_id])
+        const specificDriver = typeof kierowcy_id === 'number' ? 
+            await pool.getInstance().query('SELECT * FROM kierowcy WHERE kierowcy_id = $1', [kierowcy_id]) :
+            {rows: []}
         let putDriver
 
         if (specificDriver.rows.length === 0) {
