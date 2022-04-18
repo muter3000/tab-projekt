@@ -15,9 +15,9 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/:kierowcy_id', async (req, res) => {
-    const id = parseInt(req.params.id)
+    const kierowcy_id = parseInt(req.params.kierowcy_id)
     
-    if (typeof id !== 'number') return res.sendStatus(400)
+    if (typeof kierowcy_id !== 'number') return res.sendStatus(400)
 
     try {
         const specificDriver = await pool.getInstance().query('SELECT * FROM kierowcy WHERE kierowcy_id = $1', [kierowcy_id])
