@@ -11,9 +11,11 @@ app.use(cors({
 
 const kierowcy = require('./routes/kierowcy')
 const stanowisko_administracyjne = require('./routes/stanowisko_administracyjne')
+const administracja = require('./routes/administracja')
 
 app.use('/kierowcy', kierowcy);
-app.use('/stanowisko_administracyjne', stanowisko_administracyjne)
+app.use('/stanowisko_administracyjne', stanowisko_administracyjne);
+app.use('/administracja', administracja);
 
 app.listen(PORT, () => {
     console.log(`server is listening on port ${PORT}`)
