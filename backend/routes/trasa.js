@@ -35,7 +35,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const { miejscowosc_poczatkowa, miejscowosc_koncowa } = req.body
 
-    if (!typ) return res.sendStatus(400)
+    if (!miejscowosc_poczatkowa || !miejscowosc_koncowa) return res.sendStatus(400)
 
     try {
         const addedRoute = await pool.getInstance().query('INSERT INTO trasa (miejscowosc_poczatkowa, miejscowosc_koncowa) VALUES ($1, $2) RETURNING *', 
@@ -70,7 +70,7 @@ router.delete('/:id', async (req, res) => {
 router.put('/', async (req, res) => {
     const { id, miejscowosc_poczatkowa, miejscowosc_koncowa } = req.body
 
-    if (!id || !typ) return res.sendStatus(400)
+    if (!id || !miejscowosc_poczatkowa || !miejscowosc_koncowa) return res.sendStatus(400)
 
     try {
         const specificRoute = typeof id === 'number' ?
