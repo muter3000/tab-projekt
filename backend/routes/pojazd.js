@@ -4,7 +4,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
     try {
-        const allCars = await pool.getInstance().query('SELECT * FROM pojazd')
+        const allCars = await pool.getInstance().query('SELECT p.*, pc.ladownosc AS ladownosc FROM pojazd p LEFT JOIN pojazd_ciezarowy pc ON p.id = pc.id')
         
         return res.status(200).json(allCars.rows)
     }
@@ -20,7 +20,7 @@ router.get('/:id', async (req, res) => {
     if (typeof id !== 'number') return res.sendStatus(400)
 
     try {
-        const specificCar = await pool.getInstance().query('SELECT * FROM pojazd WHERE id = $1', [id])
+        const specificCar = await pool.getInstance().query('SELECT p.*, pc.ladownosc AS ladownosc FROM pojazd p LEFT JOIN pojazd_ciezarowy pc ON p.id = pc.id WHERE p.id = $1', [id])
 
         if (specificCar.rows.length === 0) return res.sendStatus(404)
         
@@ -33,13 +33,16 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const { numer_silnika, pojemnosc_silnika, marka_id } = req.body
+    const { numer_silnika, pojemnosc_silnika, marka_id, ladownosc } = req.body
 
     if (!numer_silnika || !pojemnosc_silnika || !marka_id) return res.sendStatus(400)
 
     try {
-        const addedCar = await pool.getInstance().query('INSERT INTO pojazd (numer_silnika, pojemnosc_silnika, marka_id) VALUES ($1, $2, $3) RETURNING *', 
-        [numer_silnika, pojemnosc_silnika, marka_id])
+        const addedCar = !ladownosc ? 
+        await pool.getInstance().query('INSERT INTO pojazd (numer_silnika, pojemnosc_silnika, marka_id) VALUES ($1, $2, $3) RETURNING *', 
+        [numer_silnika, pojemnosc_silnika, marka_id]) :
+        await pool.getInstance().query('INSERT INTO pojazd_ciezarowy (numer_silnika, pojemnosc_silnika, marka_id, ladownosc) VALUES ($1, $2, $3, $4) RETURNING *', 
+        [numer_silnika, pojemnosc_silnika, marka_id, ladownosc])
         
         return res.status(200).json(addedCar.rows[0])
     }
@@ -68,7 +71,7 @@ router.delete('/:id', async (req, res) => {
 })
 
 router.put('/', async (req, res) => {
-    const { id, numer_silnika, pojemnosc_silnika, marka_id } = req.body
+    const { id, numer_silnika, pojemnosc_silnika, marka_id, ladownosc } = req.body
 
     if (!id || !numer_silnika || !pojemnosc_silnika || !marka_id) return res.sendStatus(400)
 
@@ -77,14 +80,25 @@ router.put('/', async (req, res) => {
             await pool.getInstance().query('SELECT * FROM pojazd WHERE id = $1', [id]) :
             {rows: []}
         let putCar
-
-        if (specificCar.rows.length === 0) {
-            putCar = await pool.getInstance().query('INSERT INTO pojazd (numer_silnika, pojemnosc_silnika, marka_id) VALUES ($1, $2, $3) RETURNING *', 
-            [numer_silnika, pojemnosc_silnika, marka_id])
+        if (!ladownosc) {
+            if (specificCar.rows.length === 0) {
+                putCar = await pool.getInstance().query('INSERT INTO pojazd (numer_silnika, pojemnosc_silnika, marka_id) VALUES ($1, $2, $3) RETURNING *', 
+                [numer_silnika, pojemnosc_silnika, marka_id])
+            }
+            else {
+                putCar = await pool.getInstance().query('UPDATE pojazd SET numer_silnika = $1, pojemnosc_silnika = $2, marka_id = $3 WHERE id = $4 RETURNING *',
+                [numer_silnika, pojemnosc_silnika, marka_id, id])
+            }
         }
         else {
-            putCar = await pool.getInstance().query('UPDATE pojazd SET numer_silnika = $1, pojemnosc_silnika = $2, marka_id = $3 WHERE id = $4 RETURNING *',
-            [numer_silnika, pojemnosc_silnika, marka_id, id])
+            if (specificCar.rows.length === 0) {
+                putCar = await pool.getInstance().query('INSERT INTO pojazd_ciezarowy (numer_silnika, pojemnosc_silnika, marka_id, ladownosc) VALUES ($1, $2, $3, $4) RETURNING *', 
+                [numer_silnika, pojemnosc_silnika, marka_id, ladownosc])
+            }
+            else {
+                putCar = await pool.getInstance().query('UPDATE pojazd SET numer_silnika = $1, pojemnosc_silnika = $2, marka_id = $3, ladownosc = $4 WHERE id = $5 RETURNING *',
+                [numer_silnika, pojemnosc_silnika, marka_id, ladownosc, id])
+            }
         }
         
         return res.status(200).json(putCar.rows[0])
@@ -99,14 +113,17 @@ router.patch('/', async (req, res) => {
     if (typeof req.body.id !== 'number') return res.sendStatus(400)
 
     try {
-        const specificCar = await pool.getInstance().query('SELECT * FROM pojazd WHERE id = $1', [req.body.id])
+        const specificCar = await pool.getInstance().query('SELECT p.*, pc.ladownosc AS ladownosc FROM pojazd p LEFT JOIN pojazd_ciezarowy pc ON p.id = pc.id WHERE p.id = $1', [req.body.id])
 
         if (specificCar.rows.length === 0) return res.sendStatus(404)
 
-        const { id, numer_silnika, pojemnosc_silnika, marka_id } = {...specificCar.rows[0], ...req.body}
+        const { id, numer_silnika, pojemnosc_silnika, marka_id, ladownosc } = {...specificCar.rows[0], ...req.body}
 
-        const updatedCar = await pool.getInstance().query('UPDATE pojazd SET numer_silnika = $1, pojemnosc_silnika = $2, marka_id = $3 WHERE id = $4 RETURNING *',
-        [numer_silnika, pojemnosc_silnika, marka_id, id])
+        const updatedCar = !ladownosc ? 
+        await pool.getInstance().query('UPDATE pojazd SET numer_silnika = $1, pojemnosc_silnika = $2, marka_id = $3 WHERE id = $4 RETURNING *',
+        [numer_silnika, pojemnosc_silnika, marka_id, id]) :
+        await pool.getInstance().query('UPDATE pojazd SET numer_silnika = $1, pojemnosc_silnika = $2, marka_id = $3, ladownosc = $4 WHERE id = $5 RETURNING *',
+        [numer_silnika, pojemnosc_silnika, marka_id, ladownosc, id])
 
         return res.status(200).json(updatedCar.rows[0])
     }
