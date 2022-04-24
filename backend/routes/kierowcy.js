@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
-        return res.status(500)
+        return res.sendStatus(500)
     }
 })
 
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
-        return res.status(500)
+        return res.sendStatus(500)
     }
 })
 
@@ -63,7 +63,7 @@ router.delete('/:kierowcy_id', async (req, res) => {
     }
     catch(err) {
         console.log(err)
-        return res.status(500)
+        return res.sendStatus(500)
     }
 })
 
@@ -91,7 +91,7 @@ router.put('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
-        return res.status(500)
+        return res.sendStatus(500)
     }
 })
 
@@ -112,7 +112,7 @@ router.patch('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
-        return res.status(500)
+        return res.sendStatus(500)
     }
 })
 
