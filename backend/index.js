@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const fs = require('fs')
+const path = require('path');
 
 const PORT = process.env.PORT ?? 5000
 
@@ -9,15 +11,26 @@ app.use(cors({
     origin: '*'
 }))
 
-const kierowcy = require('./routes/kierowcy')
-const stanowisko_administracyjne = require('./routes/stanowisko_administracyjne')
-const administracja = require('./routes/administracja')
-const kategoria_prawa_jazdy = require('./routes/kategoria_prawa_jazdy')
+fs.readdir('./routes', (err, files) => {
+    if (err) return;
+    files.forEach(file => {
+        const nameSplitted = file.split('.')
+        const fileNameWithoutExtension = nameSplitted[0]
+        const fromPath = path.join('routes', file);
 
-app.use('/kierowcy', kierowcy);
-app.use('/stanowisko_administracyjne', stanowisko_administracyjne);
-app.use('/administracja', administracja);
-app.use('/kategoria_prawa_jazdy', kategoria_prawa_jazdy);
+        fs.stat(fromPath, (error, stat) => {
+            if (error) return;
+            if (stat.isDirectory()) return;
+            
+            const extension = nameSplitted[nameSplitted.length - 1]
+            if (extension !== 'js') return;
+
+            const requiredModule = require('./' + fromPath);
+            
+            app.use(`/${fileNameWithoutExtension}`, requiredModule)
+        })
+    })
+})
 
 app.listen(PORT, () => {
     console.log(`server is listening on port ${PORT}`)
