@@ -1,6 +1,6 @@
-import pg from 'pg'
+import { Sequelize, Model, DataTypes } from 'sequelize';
 
-class Pool {
+class SequelizeConnection {
     constructor() {
         throw new Error('Use Singleton.getInstance()');
     }
@@ -8,8 +8,9 @@ class Pool {
         const host = process.env.PSQL_HOST ?? "localhost"
         const port = process.env.PSQL_PORT ?? 30050
         const database = process.env.PSQL_DB ?? "postgres"
-        if (!Pool.instance) {
-            Pool.instance = new pg.Pool({
+        if (!SequelizeConnection.instance) {
+            SequelizeConnection.instance = new Sequelize({
+                dialect: 'postgres',
                 user: "admin",
                 password: "admin2137",
                 database: database,
@@ -17,8 +18,8 @@ class Pool {
                 port: port
             })
         }
-        return Pool.instance;
+        return SequelizeConnection.instance;
     }
 }
 
-export {Pool}
+module.exports = SequelizeConnection

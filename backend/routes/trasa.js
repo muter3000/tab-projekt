@@ -1,6 +1,6 @@
-const express = require('express')
-const pool = require('../pool')
-const router = express.Router()
+import express from 'express'
+import {Pool as pool} from '../pool.js'
+const router = express.Router({mergeParams: true})
 
 router.get('/', async (req, res) => {
     try {
@@ -116,4 +116,4 @@ router.patch('/', async (req, res) => {
     }
 })
 
-module.exports = router
+export default router
