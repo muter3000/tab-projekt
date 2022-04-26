@@ -15,6 +15,7 @@ const ROUTES_FOLDER_NAME = "routes"
 
 const router = express.Router()
 router.use('/kierowcy', kierowcy)
+router.use('/pojazd',pojazd)
 
 
 const PORT = process.env.PORT ?? 5000

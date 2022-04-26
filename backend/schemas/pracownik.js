@@ -1,5 +1,9 @@
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
+import sequelizeConnection from '../sequelize'
+ 
+const sequelize = sequelizeConnection.getInstance()
+
 const Pracownik = sequelize.define('Pracownik', {
   id: {type: DataTypes.INTEGER, primaryKey: true},
   PESEL: DataTypes.STRING,
@@ -9,4 +13,4 @@ const Pracownik = sequelize.define('Pracownik', {
   haslo: DataTypes.STRING,
 });
 
-module.exports = Pracownik
+export default Pracownik

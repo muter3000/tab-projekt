@@ -3,12 +3,13 @@ import {Pool as pool} from '../pool.js'
 const router = express.Router({mergeParams: true})
 //const sequeliseConnection = require('../sequelisePool')
 //const kierowca = require('../schemas/kierowca')
+import Kierowca from '../schemas/kierowca.js'
 
 router.get('/', async (req, res) => {
     try {
-        const allDrivers = await pool.getInstance().query('SELECT * FROM kierowcy')
+        const kierowcy = await Kierowca.findAll()
         
-        return res.status(200).json(allDrivers.rows)
+        return res.status(200).json(kierowcy)
     }
     catch(err) {
         console.log(err)

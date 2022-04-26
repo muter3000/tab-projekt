@@ -9,7 +9,7 @@ class SequelizeConnection {
         const port = process.env.PSQL_PORT ?? 30050
         const database = process.env.PSQL_DB ?? "postgres"
         if (!SequelizeConnection.instance) {
-            SequelizeConnection.instance = new Sequelize({
+            SequelizeConnection.instance = new Sequelize(database, "admin", "admin2137",{
                 dialect: 'postgres',
                 user: "admin",
                 password: "admin2137",
@@ -22,4 +22,4 @@ class SequelizeConnection {
     }
 }
 
-module.exports = SequelizeConnection
+export default SequelizeConnection
