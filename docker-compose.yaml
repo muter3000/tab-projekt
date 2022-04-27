@@ -7,16 +7,17 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin2137}
+      PGUSER: admin,
       PGDATA: /data/postgres
       POSTGRES_HOST_AUTH_METHOD: password
     volumes:
-       - ./postgres:/data/postgres
+      - ./postgres:/data/postgres
     ports:
       - "30050:5432"
     networks:
       - postgres
     restart: unless-stopped
-  
+
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
@@ -25,13 +26,15 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-       - ./pgadmin:/var/lib/pgadmin
-       - ./sqlfiles:/home/sqlfiles
+      - ./pgadmin:/var/lib/pgadmin
+      - ./sqlfiles:/home/sqlfiles
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
       - postgres
     restart: unless-stopped
+    depends_on:
+      - postgres
   schemaspy:
     container_name: schemaspy_container
     image: schemaspy/schemaspy
@@ -49,7 +52,9 @@ services:
       PORT: 5000
       PSQL_HOST: postgres
       PSQL_PORT: 5432
-      PSQL_DB: kierowcy
+      PSQL_DB: postgres
+      PSQL_USER: admin
+      PSQL_PASSWORD: admin2137
     depends_on:
       - postgres
     ports:

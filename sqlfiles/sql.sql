@@ -39,8 +39,8 @@ CREATE TABLE Pojazd
   (
     numer_silnika       INTEGER ,
     pojemnosc_silnika   INTEGER ,
-    Marka_ID           INTEGER NOT NULL ,
-    id    		SERIAL PRIMARY KEY
+    Marka_ID            INTEGER NOT NULL ,
+    id    		          SERIAL PRIMARY KEY
   ) ;
 
 -- check
