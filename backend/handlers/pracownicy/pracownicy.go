@@ -23,4 +23,6 @@ func (p *Pracownicy) RegisterSubRouter(router *mux.Router) {
 	get.HandleFunc("/", p.getAll)
 	get.HandleFunc("/{id:[0-9]+}", p.getByID)
 
+	post := r.Methods(http.MethodPost).Subrouter()
+	post.HandleFunc("/", p.createNew)
 }
