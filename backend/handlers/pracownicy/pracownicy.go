@@ -8,16 +8,17 @@ import (
 )
 
 type Pracownicy struct {
-	l  hclog.Logger
-	db *pg.DB
+	l    hclog.Logger
+	db   *pg.DB
+	path string
 }
 
-func NewPracownicy(l hclog.Logger, db *pg.DB) *Pracownicy {
-	return &Pracownicy{l: l, db: db}
+func NewPracownicy(l hclog.Logger, db *pg.DB, path string) *Pracownicy {
+	return &Pracownicy{l: l, db: db, path: path}
 }
 
 func (p *Pracownicy) RegisterSubRouter(router *mux.Router) {
-	r := router.PathPrefix("/pracownicy").Subrouter()
+	r := router.PathPrefix(p.path).Subrouter()
 	get := r.Methods(http.MethodGet).Subrouter()
 	get.HandleFunc("/", p.getAll)
 	get.HandleFunc("/{id:[0-9]+}", p.getByID)

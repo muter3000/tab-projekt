@@ -32,7 +32,7 @@ func main() {
 
 	sm := mux.NewRouter()
 	subRouters := []handlers.SubRouter{
-		pracownicy.NewPracownicy(l, db),
+		pracownicy.NewPracownicy(l, db, "/pracownicy"),
 	}
 
 	for _, sr := range subRouters {
