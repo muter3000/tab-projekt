@@ -19,7 +19,6 @@ func (p *Pracownicy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	if err != nil {
 		http.Error(rw, "Encoding to json", http.StatusInternalServerError)
 	}
-	p.l.Debug("")
 }
 
 func (p *Pracownicy) getByID(rw http.ResponseWriter, r *http.Request) {
