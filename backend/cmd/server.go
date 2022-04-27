@@ -14,11 +14,17 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 )
 
 func main() {
+	logLevel, err := strconv.Atoi(os.Getenv("LOG_LEVEL"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	l := hclog.Default()
+	l.SetLevel(hclog.Level(int32(logLevel)))
 	db, err := database.GetDB()
 	if err != nil {
 		l.Error("connecting to db", "err", err)

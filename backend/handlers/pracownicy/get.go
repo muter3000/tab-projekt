@@ -9,7 +9,7 @@ import (
 )
 
 func (p *Pracownicy) getAll(rw http.ResponseWriter, _ *http.Request) {
-	p.l.Debug("handling get all request for /pracownicy")
+	p.l.Debug("handling get all request", "path", p.path)
 	var pracownicy []schemas.Pracownik
 	err := p.db.Model(&pracownicy).Select()
 	if err != nil {
@@ -31,7 +31,7 @@ func (p *Pracownicy) getByID(rw http.ResponseWriter, r *http.Request) {
 		// should never happen
 		panic(err)
 	}
-	p.l.Debug("handling get by ID request for /pracownicy", "id", id)
+	p.l.Debug("handling get by ID request", "path", p.path, "id", id)
 
 	pracownik := schemas.Pracownik{Id: int32(id)}
 	err = p.db.Model(&pracownik).Select()
