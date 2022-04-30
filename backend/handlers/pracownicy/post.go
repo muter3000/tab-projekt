@@ -22,7 +22,7 @@ func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Creating new pracownik", http.StatusBadRequest)
 	}
 	pracownik.Haslo = string(saltedPassword)
-	_, err = p.db.Model(&pracownik).Insert()
+	_, err = p.db.Model(&pracownik).Returning("id",&pracownik).Insert()
 	if err != nil {
 		p.l.Error("marshaling", "err", err)
 		http.Error(rw, "Creating new pracownik", http.StatusBadRequest)

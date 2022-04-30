@@ -10,14 +10,20 @@ import (
 
 func (p *Pracownicy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	p.l.Debug("handling get all request", "path", p.path)
+
+	rw.Header().Add("Content-Type", "application/json")
+
 	var pracownicy []schemas.Pracownik
 	err := p.db.Model(&pracownicy).Select()
 	if err != nil {
-		http.Error(rw, "Getting pracownicy table", http.StatusInternalServerError)
+		p.l.Error("while handling get all", "path", p.path, "error", err)
+		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
+		return
 	}
 	err = json.NewEncoder(rw).Encode(pracownicy)
 	if err != nil {
-		http.Error(rw, "Encoding to json", http.StatusInternalServerError)
+		p.l.Error("err", "", err)
+		return
 	}
 }
 
@@ -32,13 +38,19 @@ func (p *Pracownicy) getByID(rw http.ResponseWriter, r *http.Request) {
 	}
 	p.l.Debug("handling get by ID request", "path", p.path, "id", id)
 
+	rw.Header().Add("Content-Type", "application/json")
+
 	pracownik := schemas.Pracownik{Id: int32(id)}
 	err = p.db.Model(&pracownik).Select()
 	if err != nil {
-		http.Error(rw, "Getting pracownicy table", http.StatusInternalServerError)
+		p.l.Error("while handling get by ID", "path", p.path, "error", err)
+		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
+		return
 	}
+	rw.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(rw).Encode(pracownik)
 	if err != nil {
-		http.Error(rw, "Encoding to json", http.StatusInternalServerError)
+		http.Error(rw, "Error encoding to json", http.StatusInternalServerError)
+		return
 	}
 }
