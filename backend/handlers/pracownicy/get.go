@@ -47,6 +47,32 @@ func (p *Pracownicy) getByID(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
 		return
 	}
+
+	rw.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(rw).Encode(pracownik)
+	if err != nil {
+		http.Error(rw, "Error encoding to json", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (p *Pracownicy) getByPesel(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	// convert the id into an integer and return
+	pesel := vars["pesel"]
+	p.l.Debug("handling get by pesel request", "path", p.path, "pesel", pesel)
+
+	rw.Header().Add("Content-Type", "application/json")
+
+	pracownik := schemas.Pracownik{}
+	err := p.db.Model(&pracownik).Where("pesel = ?", pesel).Select()
+	if err != nil {
+		p.l.Error("while handling get by ID", "path", p.path, "error", err)
+		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
+		return
+	}
+
 	rw.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(rw).Encode(pracownik)
 	if err != nil {
