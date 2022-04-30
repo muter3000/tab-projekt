@@ -39,8 +39,8 @@ CREATE TABLE Pojazd
   (
     numer_silnika       INTEGER ,
     pojemnosc_silnika   INTEGER ,
-    Marka_ID           INTEGER NOT NULL ,
-    id    		SERIAL PRIMARY KEY
+    Marka_ID            INTEGER NOT NULL ,
+    id    		          SERIAL PRIMARY KEY
   ) ;
 
 -- check
@@ -110,71 +110,6 @@ ALTER TABLE Kurs ADD CONSTRAINT Kurs_Pojazd_FK FOREIGN KEY ( Pojazd_ID ) REFEREN
 ALTER TABLE Kurs ADD CONSTRAINT Kurs_Trasa_FK FOREIGN KEY ( Trasa_ID ) REFERENCES Trasa ( ID ) ;
 
 ALTER TABLE Pojazd ADD CONSTRAINT Pojazd_Marka_FK FOREIGN KEY ( Marka_ID ) REFERENCES Marka ( ID ) ;
-
-
-
-CREATE SEQUENCE Administracja_ID_SEQ
-   OWNED BY Administracja.Administracja_ID;
-
-ALTER TABLE Administracja
-   ALTER Administracja_ID
-      SET DEFAULT nextval('Administracja_ID_SEQ'::regclass);
-
-CREATE SEQUENCE Kierowcy_ID_SEQ
-   OWNED BY Kierowcy.Kierowcy_ID;  
-
-ALTER TABLE Kierowcy
-   ALTER Kierowcy_ID
-      SET DEFAULT nextval('Kierowcy_ID_SEQ'::regclass);
-
-CREATE SEQUENCE Kategoria_Prawa_Jazdy_ID_SEQ
-   OWNED BY Kategoria_Prawa_Jazdy.id;
-
-ALTER TABLE Kategoria_Prawa_Jazdy
-   ALTER id
-      SET DEFAULT nextval('Kategoria_Prawa_Jazdy_ID_SEQ'::regclass);
-
-
-CREATE SEQUENCE Kierowcy_ID_SEQ
-   OWNED BY Kierowcy.id;
-
-ALTER TABLE Kierowcy
-   ALTER id
-      SET DEFAULT nextval('Kierowcy_ID_SEQ'::regclass);
-
-
-CREATE SEQUENCE Marka_ID_SEQ
-   OWNED BY Kierowcy.id;
-
-ALTER TABLE Marka
-   ALTER id
-      SET DEFAULT nextval('Marka_ID_SEQ'::regclass);
-
-
-
-CREATE SEQUENCE Pojazd_ID_SEQ
-   OWNED BY Pojazd.id;
-
-ALTER TABLE Pojazd
-   ALTER id
-      SET DEFAULT nextval('Pojazd_ID_SEQ'::regclass);
-
-
-CREATE SEQUENCE Stanowisko_Administracyjne_ID_SEQ
-   OWNED BY Stanowisko_Administracyjne.id;
-
-ALTER TABLE Stanowisko_Administracyjne
-   ALTER id
-      SET DEFAULT nextval('Stanowisko_Administracyjne_ID_SEQ'::regclass);
-
-
-CREATE SEQUENCE Trasa_ID_SEQ
-   OWNED BY Trasa.id;
-
-ALTER TABLE Trasa
-   ALTER id
-      SET DEFAULT nextval('Trasa_ID_SEQ'::regclass);
-
 
 -- Oracle SQL Developer Data Modeler Summary Report: 
 -- 
