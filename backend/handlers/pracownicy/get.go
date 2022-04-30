@@ -73,7 +73,6 @@ func (p *Pracownicy) getByPesel(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rw.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(rw).Encode(pracownik)
 	if err != nil {
 		http.Error(rw, "Error encoding to json", http.StatusInternalServerError)

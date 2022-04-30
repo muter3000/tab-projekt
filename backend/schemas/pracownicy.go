@@ -1,5 +1,10 @@
 package schemas
 
+import (
+	"context"
+	"github.com/go-pg/pg/v10"
+)
+
 type Pracownik struct {
 	tableName struct{} `pg:"pracownicy"`
 	Id        int32    `pg:"id,pk" json:"id"`
@@ -7,7 +12,14 @@ type Pracownik struct {
 	Imie      string   `pg:"imie" json:"imie"`
 	Nazwisko  string   `pg:"nazwisko" json:"nazwisko"`
 	Login     string   `pg:"login" json:"login"`
-	Haslo     string   `pg:"haslo" json:"haslo"`
+	Haslo     string   `pg:"haslo" json:"haslo,omitempty"`
+}
+
+var _ pg.AfterScanHook = (*Pracownik)(nil)
+
+func (p *Pracownik) AfterScan(ctx context.Context) error {
+	p.Haslo = ""
+	return nil
 }
 
 type Kierowca struct {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/tab-projekt-backend/schemas"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 )
 
@@ -27,6 +26,5 @@ func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
 		p.l.Error("marshaling", "err", err)
 		http.Error(rw, "Creating new pracownik", http.StatusBadRequest)
 	}
-	log.New(rw, "server", 0).Println("Success")
 
 }
