@@ -14,12 +14,14 @@ func (p *Pracownicy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	var pracownicy []schemas.Pracownik
+
 	err := p.db.Model(&pracownicy).Select()
 	if err != nil {
 		p.l.Error("while handling get all", "path", p.path, "error", err)
 		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
 		return
 	}
+
 	err = json.NewEncoder(rw).Encode(pracownicy)
 	if err != nil {
 		p.l.Error("err", "", err)
@@ -48,7 +50,6 @@ func (p *Pracownicy) getByID(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rw.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(rw).Encode(pracownik)
 	if err != nil {
 		http.Error(rw, "Error encoding to json", http.StatusInternalServerError)
@@ -66,6 +67,7 @@ func (p *Pracownicy) getByPesel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	pracownik := schemas.Pracownik{}
+
 	err := p.db.Model(&pracownik).Where("pesel = ?", pesel).Select()
 	if err != nil {
 		p.l.Error("while handling get by ID", "path", p.path, "error", err)

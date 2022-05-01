@@ -3,6 +3,7 @@ package schemas
 import (
 	"context"
 	"github.com/go-pg/pg/v10"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Pracownik struct {
@@ -15,11 +16,25 @@ type Pracownik struct {
 	Haslo     string   `pg:"haslo" json:"haslo,omitempty"`
 }
 
+//Compile time check
 var _ pg.AfterScanHook = (*Pracownik)(nil)
+
+//
 
 func (p *Pracownik) AfterScan(ctx context.Context) error {
 	p.Haslo = ""
 	return nil
+}
+
+var _ pg.BeforeInsertHook = (*Pracownik)(nil)
+
+func (p *Pracownik) BeforeInsert(ctx context.Context) (context.Context, error) {
+	password, err := bcrypt.GenerateFromPassword([]byte(p.Haslo), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	p.Haslo = string(password)
+	return ctx, nil
 }
 
 type Kierowca struct {
