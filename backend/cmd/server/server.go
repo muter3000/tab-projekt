@@ -3,19 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/go-pg/pg/v10"
-	gohandlers "github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	"github.com/hashicorp/go-hclog"
-	"github.com/tab-projekt-backend/database"
-	"github.com/tab-projekt-backend/handlers"
-	"github.com/tab-projekt-backend/handlers/pracownicy"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"time"
+
+	"github.com/go-pg/pg/v10"
+	gohandlers "github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/hashicorp/go-hclog"
+	"github.com/tab-projekt-backend/database"
+	"github.com/tab-projekt-backend/handlers"
+	"github.com/tab-projekt-backend/handlers/kierowcy"
+	"github.com/tab-projekt-backend/handlers/pracownicy"
 )
 
 func main() {
@@ -39,6 +41,7 @@ func main() {
 	sm := mux.NewRouter()
 	subRouters := []handlers.SubRouter{
 		pracownicy.NewPracownicy(l, db, "/pracownicy"),
+		kierowcy.NewKierowcy(l, db, "/kierowcy"),
 	}
 
 	for _, sr := range subRouters {
