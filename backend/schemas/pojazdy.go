@@ -1,12 +1,13 @@
 package schemas
 
 type Pojazd struct {
-	tableName        struct{} `pg:"pojazdy"`
-	Id               int32    `pg:"id,pk" json:"id"`
-	NumerSilnika     int32    `pg:"numer_silnika" json:"numer_silnika"`
-	PojemnoscSilnika int32    `pg:"pojemnosc_silnika" json:"pojemnosc_silnika"`
-	MarkaID          int32    `json:"marka_id"`
-	Marka            *Marka   `pg:"rel:has-one"`
+	tableName          struct{} `pg:"pojazdy"`
+	Id                 int32    `pg:"id,pk" json:"id"`
+	NumerSilnika       int32    `pg:"numer_silnika" json:"numer_silnika"`
+	PojemnoscSilnika   int32    `pg:"pojemnosc_silnika" json:"pojemnosc_silnika"`
+	MarkaID            int32    `json:"marka_id"`
+	NumerRejestracyjny string   `pg:"numer_rejestracyjny,unique" json:"numer_rejestracyjny"`
+	Marka              *Marka   `pg:"rel:has-one"`
 }
 
 type PojazdCiezarowy struct {

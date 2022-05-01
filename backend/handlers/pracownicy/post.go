@@ -22,11 +22,13 @@ func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p.l.Error("marshaling", "err", err)
 		http.Error(rw, "Error creating new pracownik", http.StatusBadRequest)
+		return
 	}
 
 	_, err = p.db.Model(&pracownik).Returning("id", &pracownik).Insert()
 	if err != nil {
 		http.Error(rw, "Error creating new pracownik", http.StatusBadRequest)
+		return
 	}
 
 	pracownik.Haslo = ""
@@ -34,6 +36,7 @@ func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(rw).Encode(pracownik)
 	if err != nil {
 		http.Error(rw, "Error marshaling new pracownik", http.StatusBadRequest)
+		return
 	}
 
 }

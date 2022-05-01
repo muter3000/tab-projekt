@@ -2,6 +2,7 @@ package schemas
 
 import (
 	"context"
+	"errors"
 	"github.com/go-pg/pg/v10"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -9,10 +10,10 @@ import (
 type Pracownik struct {
 	tableName struct{} `pg:"pracownicy"`
 	Id        int32    `pg:"id,pk" json:"id"`
-	Pesel     string   `pg:"pesel" json:"pesel"`
+	Pesel     string   `pg:"pesel,unique" json:"pesel"`
 	Imie      string   `pg:"imie" json:"imie"`
 	Nazwisko  string   `pg:"nazwisko" json:"nazwisko"`
-	Login     string   `pg:"login" json:"login"`
+	Login     string   `pg:"login,unique" json:"login"`
 	Haslo     string   `pg:"haslo" json:"haslo,omitempty"`
 }
 
@@ -37,10 +38,35 @@ func (p *Pracownik) BeforeInsert(ctx context.Context) (context.Context, error) {
 	return ctx, nil
 }
 
+var _ pg.AfterInsertHook = (*Pracownik)(nil)
+
+func (p *Pracownik) AfterInsert(context.Context) error {
+	p.Haslo = ""
+	return nil
+}
+
 type Kierowca struct {
 	Pracownik  `pg:",inherit"`
 	tableName  struct{} `pg:"kierowcy"`
 	KierowcaID int32    `pg:"kierowca_id,pk" json:"kierowca_id"`
+}
+
+var _ pg.BeforeInsertHook = (*Kierowca)(nil)
+
+func (k *Kierowca) BeforeInsert(ctx context.Context) (context.Context, error) {
+	valid, err := k.validate()
+	if err != nil {
+		return nil, err
+	}
+	if !valid {
+		return nil, errors.New("user input from post request invalid")
+	}
+
+	ctx2, err := k.Pracownik.BeforeInsert(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return ctx2, nil
 }
 
 type Administrator struct {

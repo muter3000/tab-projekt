@@ -20,22 +20,26 @@ func (a *Administratorzy) createNew(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		a.l.Error("marshaling", "err", err)
 		http.Error(rw, "Creating new administrator", http.StatusInternalServerError)
+		return
 	}
 	saltedPassword, err := bcrypt.GenerateFromPassword([]byte(administrator.Haslo), bcrypt.DefaultCost)
 	if err != nil {
 		a.l.Error("marshaling", "err", err)
 		http.Error(rw, "Salting password", http.StatusInternalServerError)
+		return
 	}
 	administrator.Haslo = string(saltedPassword)
 	_, err = a.db.Model(&administrator).Returning("*", &administrator).Insert()
 	if err != nil {
 		a.l.Error("marshaling", "err", err)
 		http.Error(rw, "Inserting into database", http.StatusInternalServerError)
+		return
 	}
 	retured, err := json.Marshal(administrator)
 	if err != nil {
 		a.l.Error("marshaling", "err", err)
 		http.Error(rw, "Marshalling response to json", http.StatusInternalServerError)
+		return
 	}
 	rw.Write(retured)
 }
