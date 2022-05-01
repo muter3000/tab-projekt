@@ -2,7 +2,6 @@ package pracownicy
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/tab-projekt-backend/schemas"
@@ -20,19 +19,23 @@ func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		p.l.Error("marshaling", "err", err)
-		http.Error(rw, "Creating new pracownik", http.StatusBadRequest)
+		http.Error(rw, "Creating new pracownik", http.StatusInternalServerError)
 	}
 	saltedPassword, err := bcrypt.GenerateFromPassword([]byte(pracownik.Haslo), bcrypt.DefaultCost)
 	if err != nil {
 		p.l.Error("marshaling", "err", err)
-		http.Error(rw, "Creating new pracownik", http.StatusBadRequest)
+		http.Error(rw, "Salting password", http.StatusInternalServerError)
 	}
 	pracownik.Haslo = string(saltedPassword)
-	_, err = p.db.Model(&pracownik).Returning("id", &pracownik).Insert()
+	_, err = p.db.Model(&pracownik).Returning("*", &pracownik).Insert()
 	if err != nil {
 		p.l.Error("marshaling", "err", err)
-		http.Error(rw, "Creating new pracownik", http.StatusBadRequest)
+		http.Error(rw, "Inserting into database", http.StatusInternalServerError)
 	}
-	log.New(rw, "server", 0).Println("Success")
-
+	retured, err := json.Marshal(pracownik)
+	if err != nil {
+		p.l.Error("marshaling", "err", err)
+		http.Error(rw, "Marshalling response to json", http.StatusInternalServerError)
+	}
+	rw.Write(retured)
 }
