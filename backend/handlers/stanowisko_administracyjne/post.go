@@ -8,6 +8,7 @@ import (
 )
 
 func (sa *Stanowisko_administracyjne) createNew(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
 	sa.l.Debug("handling post request", "path", sa.path)
 	stanowisko := schemas.StanowiskoAdministracyjne{}
 	err := json.NewDecoder(r.Body).Decode(&stanowisko)

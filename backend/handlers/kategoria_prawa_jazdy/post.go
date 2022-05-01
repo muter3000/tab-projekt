@@ -8,6 +8,7 @@ import (
 )
 
 func (sa *Kategoria_prawa_jazdy) createNew(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
 	sa.l.Debug("handling post request", "path", sa.path)
 	kategoria := schemas.KategoriaPrawaJazdy{}
 	err := json.NewDecoder(r.Body).Decode(&kategoria)

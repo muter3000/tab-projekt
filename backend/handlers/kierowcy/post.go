@@ -9,6 +9,7 @@ import (
 )
 
 func (k *Kierowcy) createNew(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
 	k.l.Debug("handling post request", "path", k.path)
 	kierowca := schemas.Kierowca{}
 	err := json.NewDecoder(r.Body).Decode(&kierowca)
@@ -31,7 +32,7 @@ func (k *Kierowcy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Inserting into database", http.StatusInternalServerError)
 		return
 	}
-	
+
 	kierowca.Haslo = ""
 
 	err = json.NewEncoder(rw).Encode(kierowca)
@@ -39,5 +40,5 @@ func (k *Kierowcy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Error marshaling new pracownik", http.StatusBadRequest)
 		return
 	}
-	
+
 }

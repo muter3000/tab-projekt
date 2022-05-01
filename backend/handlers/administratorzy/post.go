@@ -9,6 +9,7 @@ import (
 )
 
 func (a *Administratorzy) createNew(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
 	a.l.Debug("handling post request", "path", a.path)
 	administrator := schemas.Administrator{}
 	err := json.NewDecoder(r.Body).Decode(&administrator)
