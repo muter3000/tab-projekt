@@ -1,15 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/hashicorp/go-hclog"
-	"github.com/tab-projekt-backend/database"
+	"github.com/tab-projekt-backend/database/postgres"
 	"github.com/tab-projekt-backend/schemas"
 )
 
 func main() {
 	log := hclog.Default()
-	db, err := database.GetDB()
+	db, err := postgres.GetDB()
 	if err != nil {
 		log.Error("connecting to db", "err", err)
 	}
@@ -34,4 +35,5 @@ func main() {
 			panic(err)
 		}
 	}
+	fmt.Printf("Database created\n")
 }
