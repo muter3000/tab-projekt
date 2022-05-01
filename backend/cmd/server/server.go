@@ -17,8 +17,10 @@ import (
 	"github.com/tab-projekt-backend/database"
 	"github.com/tab-projekt-backend/handlers"
 	"github.com/tab-projekt-backend/handlers/administratorzy"
+	"github.com/tab-projekt-backend/handlers/kategoria_prawa_jazdy"
 	"github.com/tab-projekt-backend/handlers/kierowcy"
 	"github.com/tab-projekt-backend/handlers/pracownicy"
+	"github.com/tab-projekt-backend/handlers/stanowisko_administracyjne"
 )
 
 func main() {
@@ -44,6 +46,8 @@ func main() {
 		pracownicy.NewPracownicy(l, db, "/pracownicy"),
 		kierowcy.NewKierowcy(l, db, "/kierowcy"),
 		administratorzy.NewAdministratorzy(l, db, "/administracja"),
+		stanowisko_administracyjne.NewStanowiskoAdministracyjne(l, db, "/stanowisko_administracyjne"),
+		kategoria_prawa_jazdy.NewKategoriaPrawaJazdy(l, db, "/kategoria_prawa_jazdy"),
 	}
 
 	for _, sr := range subRouters {
