@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/tab-projekt-backend/database"
 	"github.com/tab-projekt-backend/handlers"
+	"github.com/tab-projekt-backend/handlers/administratorzy"
 	"github.com/tab-projekt-backend/handlers/kierowcy"
 	"github.com/tab-projekt-backend/handlers/pracownicy"
 )
@@ -42,6 +43,7 @@ func main() {
 	subRouters := []handlers.SubRouter{
 		pracownicy.NewPracownicy(l, db, "/pracownicy"),
 		kierowcy.NewKierowcy(l, db, "/kierowcy"),
+		administratorzy.NewAdministratorzy(l, db, "/administracja"),
 	}
 
 	for _, sr := range subRouters {
