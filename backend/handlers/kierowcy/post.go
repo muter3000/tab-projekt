@@ -31,11 +31,13 @@ func (k *Kierowcy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Inserting into database", http.StatusInternalServerError)
 		return
 	}
-	retured, err := json.Marshal(kierowca)
+	
+	kierowca.Haslo = ""
+
+	err = json.NewEncoder(rw).Encode(kierowca)
 	if err != nil {
-		k.l.Error("marshaling", "err", err)
-		http.Error(rw, "Marshalling response to json", http.StatusInternalServerError)
+		http.Error(rw, "Error marshaling new pracownik", http.StatusBadRequest)
 		return
 	}
-	rw.Write(retured)
+	
 }

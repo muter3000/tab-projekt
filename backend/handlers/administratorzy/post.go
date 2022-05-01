@@ -35,11 +35,13 @@ func (a *Administratorzy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Inserting into database", http.StatusInternalServerError)
 		return
 	}
-	retured, err := json.Marshal(administrator)
+
+	administrator.Haslo = ""
+
+	err = json.NewEncoder(rw).Encode(administrator)
 	if err != nil {
-		a.l.Error("marshaling", "err", err)
-		http.Error(rw, "Marshalling response to json", http.StatusInternalServerError)
+		http.Error(rw, "Error marshaling new pracownik", http.StatusBadRequest)
 		return
 	}
-	rw.Write(retured)
+
 }
