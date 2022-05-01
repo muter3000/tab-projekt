@@ -2,15 +2,17 @@ package pracownicy
 
 import (
 	"encoding/json"
-	"net/http"
 
 	"github.com/tab-projekt-backend/schemas"
-	"golang.org/x/crypto/bcrypt"
+	"net/http"
 )
 
 func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
+
 	p.l.Debug("handling post request", "path", p.path)
+
 	pracownik := schemas.Pracownik{}
+
 	err := json.NewDecoder(r.Body).Decode(&pracownik)
 	if pracownik.Haslo == "" || pracownik.Login == "" || pracownik.Imie == "" || pracownik.Nazwisko == "" ||
 		pracownik.Pesel == "" || len(pracownik.Pesel) != 11 {
@@ -19,23 +21,19 @@ func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		p.l.Error("marshaling", "err", err)
-		http.Error(rw, "Creating new pracownik", http.StatusInternalServerError)
+		http.Error(rw, "Error creating new pracownik", http.StatusBadRequest)
 	}
-	saltedPassword, err := bcrypt.GenerateFromPassword([]byte(pracownik.Haslo), bcrypt.DefaultCost)
+
+	_, err = p.db.Model(&pracownik).Returning("id", &pracownik).Insert()
 	if err != nil {
-		p.l.Error("marshaling", "err", err)
-		http.Error(rw, "Salting password", http.StatusInternalServerError)
+		http.Error(rw, "Error creating new pracownik", http.StatusBadRequest)
 	}
-	pracownik.Haslo = string(saltedPassword)
-	_, err = p.db.Model(&pracownik).Returning("*", &pracownik).Insert()
+
+	pracownik.Haslo = ""
+
+	err = json.NewEncoder(rw).Encode(pracownik)
 	if err != nil {
-		p.l.Error("marshaling", "err", err)
-		http.Error(rw, "Inserting into database", http.StatusInternalServerError)
+		http.Error(rw, "Error marshaling new pracownik", http.StatusBadRequest)
 	}
-	retured, err := json.Marshal(pracownik)
-	if err != nil {
-		p.l.Error("marshaling", "err", err)
-		http.Error(rw, "Marshalling response to json", http.StatusInternalServerError)
-	}
-	rw.Write(retured)
+
 }

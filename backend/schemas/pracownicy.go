@@ -1,5 +1,11 @@
 package schemas
 
+import (
+	"context"
+	"github.com/go-pg/pg/v10"
+	"golang.org/x/crypto/bcrypt"
+)
+
 type Pracownik struct {
 	tableName struct{} `pg:"pracownicy"`
 	Id        int32    `pg:"id,pk" json:"id"`
@@ -7,7 +13,28 @@ type Pracownik struct {
 	Imie      string   `pg:"imie" json:"imie"`
 	Nazwisko  string   `pg:"nazwisko" json:"nazwisko"`
 	Login     string   `pg:"login" json:"login"`
-	Haslo     string   `pg:"haslo" json:"haslo"`
+	Haslo     string   `pg:"haslo" json:"haslo,omitempty"`
+}
+
+//Compile time check
+var _ pg.AfterScanHook = (*Pracownik)(nil)
+
+//
+
+func (p *Pracownik) AfterScan(context.Context) error {
+	p.Haslo = ""
+	return nil
+}
+
+var _ pg.BeforeInsertHook = (*Pracownik)(nil)
+
+func (p *Pracownik) BeforeInsert(ctx context.Context) (context.Context, error) {
+	password, err := bcrypt.GenerateFromPassword([]byte(p.Haslo), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	p.Haslo = string(password)
+	return ctx, nil
 }
 
 type Kierowca struct {
