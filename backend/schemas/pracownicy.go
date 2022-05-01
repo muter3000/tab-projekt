@@ -21,7 +21,7 @@ var _ pg.AfterScanHook = (*Pracownik)(nil)
 
 //
 
-func (p *Pracownik) AfterScan(ctx context.Context) error {
+func (p *Pracownik) AfterScan(context.Context) error {
 	p.Haslo = ""
 	return nil
 }
