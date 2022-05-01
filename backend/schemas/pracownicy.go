@@ -3,6 +3,7 @@ package schemas
 import (
 	"context"
 	"errors"
+
 	"github.com/go-pg/pg/v10"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -73,9 +74,10 @@ type Administrator struct {
 	Pracownik                   `pg:",inherit"`
 	tableName                   struct{}                   `pg:"administratorzy"`
 	AdministracjaID             int32                      `pg:"administracja_id,pk" json:"administracja_id"`
-	StanowiskoAdministracyjneID int32                      `json:"stanowisko_administracyjne_id"`
+	StanowiskoAdministracyjneID int32                      `pg:",notnull,on_delete:RESTRICT" json:"stanowisko_administracyjne_id"`
 	StanowiskoAdministracyjne   *StanowiskoAdministracyjne `pg:"rel:has-one"`
 }
+
 type StanowiskoAdministracyjne struct {
 	tableName struct{} `pg:"stanowiska_administracyjne"`
 	Id        int32    `pg:"id,pk" json:"id"`
@@ -90,8 +92,8 @@ type KategoriaPrawaJazdy struct {
 
 type KategoriaKierowcy struct {
 	tableName             struct{}             `pg:"kategoria_kierowcy"`
-	KierowcaID            int32                `json:"kierowca_id"`
+	KierowcaID            int32                `pg:",notnull,on_delete:RESTRICT" json:"kierowca_id"`
 	Kierowca              *Kierowca            `pg:"rel:has-one"`
-	KategoriaPrawaJazdyID int32                `json:"kategoria_prawa_jazdy_id"`
+	KategoriaPrawaJazdyID int32                `pg:",notnull,on_delete:RESTRICT" json:"kategoria_prawa_jazdy_id"`
 	KategoriaPrawaJazdy   *KategoriaPrawaJazdy `pg:"rel:has-one"`
 }

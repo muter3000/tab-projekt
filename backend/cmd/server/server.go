@@ -63,8 +63,8 @@ func main() {
 		Addr:         bindAddress,                                      // configure the bind address
 		Handler:      ch(sm),                                           // set the default handler
 		ErrorLog:     l.StandardLogger(&hclog.StandardLoggerOptions{}), // set the logger for the server
-		ReadTimeout:  50 * time.Millisecond,                            // max time to read request from the client
-		WriteTimeout: 100 * time.Millisecond,                           // max time to write response to the client
+		ReadTimeout:  1000 * time.Millisecond,                          // max time to read request from the client
+		WriteTimeout: 1000 * time.Millisecond,                          // max time to write response to the client
 		IdleTimeout:  1200 * time.Millisecond,                          // max time for connections using TCP Keep-Alive
 	}
 
