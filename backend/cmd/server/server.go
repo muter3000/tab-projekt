@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/tab-projekt-backend/database/postgres"
+	"github.com/tab-projekt-backend/database/psql"
 	"github.com/tab-projekt-backend/handlers"
 	"github.com/tab-projekt-backend/handlers/server/administratorzy"
 	"github.com/tab-projekt-backend/handlers/server/kierowcy"
