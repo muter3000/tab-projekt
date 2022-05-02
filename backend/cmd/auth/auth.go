@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/go-pg/pg/v10"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
@@ -27,16 +26,14 @@ func main() {
 	l.SetLevel(hclog.Level(int32(logLevel)))
 	db, err := psql.GetDB()
 	if err != nil {
-		l.Error("connecting to db", "err", err)
+		l.Error("connecting to psql db", "err", err)
 	}
-	defer func(db *pg.DB) {
-		err := db.Close()
-		if err != nil {
+	defer db.Close()
 
-		}
-	}(db)
-
-	rc := redis.NewRedisClient(l)
+	rc, err := redis.NewRedisClient(l)
+	if err != nil {
+		l.Error("connecting to redis", "err", err)
+	}
 
 	authHandler := auth.NewAuthHandler(rc)
 

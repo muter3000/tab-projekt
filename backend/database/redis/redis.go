@@ -31,7 +31,7 @@ type Session struct {
 	Level     PermissionLevel
 }
 
-func NewRedisClient(l hclog.Logger) *RedisClient {
+func NewRedisClient(l hclog.Logger) (*RedisClient, error) {
 	host := os.Getenv("REDIS_HOST")
 	port := os.Getenv("REDIS_PORT")
 	rdb := redis.NewClient(&redis.Options{
@@ -43,11 +43,10 @@ func NewRedisClient(l hclog.Logger) *RedisClient {
 	})
 
 	if _, err := rdb.Ping(context.Background()).Result(); err != nil {
-		l.Error("pinging regis", "err", err)
-		return nil
+		return nil, err
 	}
 
-	return &RedisClient{l: l, client: rdb}
+	return &RedisClient{l: l, client: rdb}, nil
 }
 
 func (rc *RedisClient) CreateUserSession(rw http.ResponseWriter, level PermissionLevel) bool {
@@ -85,6 +84,7 @@ func (rc *RedisClient) InvalidateUserSession(rw http.ResponseWriter, r *http.Req
 		rc.l.Warn("db error while invalidating token", "err", err)
 		return false
 	}
+	rc.l.Debug("Invalidated session", "sessionID", sId)
 	return true
 }
 

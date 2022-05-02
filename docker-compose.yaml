@@ -13,8 +13,6 @@ services:
       PSQL_PASSWORD: admin2137
     depends_on:
       - postgres
-    networks:
-      - postgres
   postgres:
     container_name: postgres_container
     image: postgres:alpine
@@ -28,10 +26,7 @@ services:
       - ./postgres:/data/postgres
     ports:
       - "30050:5432"
-    networks:
-      - postgres
     restart: unless-stopped
-
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
@@ -44,8 +39,6 @@ services:
       - ./sqlfiles:/home/sqlfiles
     ports:
       - "${PGADMIN_PORT:-5050}:80"
-    networks:
-      - postgres
     restart: unless-stopped
     depends_on:
       - postgres
@@ -58,12 +51,11 @@ services:
       - ./schemaspy-config:/config
     depends_on:
       - postgres
-    networks:
-      - postgres
   backend:
     build:
       context: ./backend
       dockerfile: ./docker/server/Dockerfile
+    restart: unless-stopped
     environment:
       PORT: 5000
       PSQL_HOST: postgres
@@ -77,12 +69,11 @@ services:
       - postgres
     ports:
       - "5000:5000"
-    networks:
-      - postgres
   auth:
     build:
       context: ./backend
       dockerfile: ./docker/auth/Dockerfile
+    restart: unless-stopped
     environment:
       LOG_LEVEL: 2
       PORT: 6000
@@ -93,6 +84,11 @@ services:
       PSQL_PASSWORD: admin2137
       REDIS_HOST: redis
       REDIS_PORT: 6379
+    ports:
+      - "6000:6000"
+    depends_on:
+      - redis
+      - postgres
   redis:
     image: redis:alpine
     restart: always
@@ -103,9 +99,6 @@ services:
       - cache:/data
   nginx:
     image: nginx:alpine
-networks:
-  postgres:
-    driver: bridge
 volumes:
   cache:
     driver: local
