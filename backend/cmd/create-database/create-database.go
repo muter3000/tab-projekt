@@ -10,7 +10,7 @@ import (
 
 func main() {
 	log := hclog.Default()
-	db, err := postgres.GetDB()
+	db, err := psql.GetDB()
 	if err != nil {
 		log.Error("connecting to db", "err", err)
 	}
