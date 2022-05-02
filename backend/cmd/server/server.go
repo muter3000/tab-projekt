@@ -28,7 +28,7 @@ func main() {
 	}
 	l := hclog.Default()
 	l.SetLevel(hclog.Level(int32(logLevel)))
-	db, err := postgres.GetDB()
+	db, err := psql.GetDB()
 	if err != nil {
 		l.Error("connecting to db", "err", err)
 	}
