@@ -3,9 +3,12 @@ package redis
 import (
 	"context"
 	"fmt"
+	"github.com/go-pg/pg/v10"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-hclog"
+	"github.com/tab-projekt-backend/schemas"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"os"
 	"strconv"
@@ -18,12 +21,13 @@ const (
 	None PermissionLevel = iota
 	Kierowca
 	Administator
-	AdminstratorDB
+	AdministratorDB
 )
 
-type RedisClient struct {
-	l      hclog.Logger
-	client *redis.Client
+type AuthorizationClient struct {
+	l  hclog.Logger
+	rc *redis.Client
+	pg *pg.DB
 }
 
 type Session struct {
@@ -31,7 +35,7 @@ type Session struct {
 	Level     PermissionLevel
 }
 
-func NewRedisClient(l hclog.Logger) (*RedisClient, error) {
+func NewAuthorizationClient(l hclog.Logger, pg *pg.DB) (*AuthorizationClient, error) {
 	host := os.Getenv("REDIS_HOST")
 	port := os.Getenv("REDIS_PORT")
 	rdb := redis.NewClient(&redis.Options{
@@ -46,10 +50,40 @@ func NewRedisClient(l hclog.Logger) (*RedisClient, error) {
 		return nil, err
 	}
 
-	return &RedisClient{l: l, client: rdb}, nil
+	return &AuthorizationClient{l: l, rc: rdb, pg: pg}, nil
 }
 
-func (rc *RedisClient) CreateUserSession(rw http.ResponseWriter, level PermissionLevel) bool {
+func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login string, password string, level PermissionLevel) bool {
+	a.l.Debug("Handling session creation with", "login", login, "level", level)
+	switch level {
+	case Kierowca:
+		kierowca := schemas.Kierowca{}
+		err := a.pg.Model(&kierowca).Where("login = ?", login).Select()
+		if err != nil {
+			a.l.Debug("err happened while reading from db", "err", err)
+			return false
+		}
+		if err = bcrypt.CompareHashAndPassword([]byte(kierowca.Haslo), []byte(password)); err != nil {
+			a.l.Debug("bcrypt.Compare", "hash", kierowca.Haslo, "pass", password, "err", err)
+			return false
+		}
+	case Administator:
+		var administrator schemas.Administrator
+		err := a.pg.Model(&administrator).Where("login = ?", login).Select()
+		if err != nil {
+			a.l.Debug("err happened while reading from db", "err", err)
+			return false
+		}
+		if err = bcrypt.CompareHashAndPassword([]byte(administrator.Haslo), []byte(password)); err != nil {
+			a.l.Debug("bcrypt.Compare", "hash", administrator.Haslo, "pass", password, "err", err)
+			return false
+		}
+	case AdministratorDB:
+		if login != "adminDB" || password != os.Getenv("DB_ADMIN_PASS") {
+			return false
+		}
+	}
+
 	sId := uuid.New().String()
 	cookie := &http.Cookie{
 		Name:   "session-id",
@@ -58,15 +92,15 @@ func (rc *RedisClient) CreateUserSession(rw http.ResponseWriter, level Permissio
 	}
 	http.SetCookie(rw, cookie)
 
-	err := rc.client.Set(context.Background(), sId, strconv.Itoa(int(level)), 300*time.Second).Err()
+	err := a.rc.Set(context.Background(), sId, strconv.Itoa(int(level)), 300*time.Second).Err()
 	if err != nil {
 		return false
 	}
-	rc.l.Debug("Created session with", "id", sId, "level", int8(level))
+	a.l.Debug("Created session with", "id", sId, "level", int8(level))
 	return true
 }
 
-func (rc *RedisClient) InvalidateUserSession(rw http.ResponseWriter, r *http.Request) bool {
+func (a *AuthorizationClient) InvalidateUserSession(r *http.Request) bool {
 	cookies := r.Cookies()
 	sId := ""
 	for _, c := range cookies {
@@ -76,19 +110,19 @@ func (rc *RedisClient) InvalidateUserSession(rw http.ResponseWriter, r *http.Req
 		}
 	}
 	if sId == "" {
-		rc.l.Debug("user didn't send session cookie")
+		a.l.Debug("user didn't send session cookie")
 		return false
 	}
-	err := rc.client.Del(context.Background(), sId).Err()
+	err := a.rc.Del(context.Background(), sId).Err()
 	if err != nil {
-		rc.l.Warn("db error while invalidating token", "err", err)
+		a.l.Warn("db error while invalidating token", "err", err)
 		return false
 	}
-	rc.l.Debug("Invalidated session", "sessionID", sId)
+	a.l.Debug("Invalidated session", "sessionID", sId)
 	return true
 }
 
-func (rc *RedisClient) CheckAuthorization(r *http.Request, level PermissionLevel) bool {
+func (a *AuthorizationClient) CheckAuthorization(r *http.Request, level PermissionLevel) bool {
 	cookies := r.Cookies()
 
 	sId := ""
@@ -99,23 +133,23 @@ func (rc *RedisClient) CheckAuthorization(r *http.Request, level PermissionLevel
 		}
 	}
 	if sId == "" {
-		rc.l.Debug("user didn't send session cookie")
+		a.l.Debug("user didn't send session cookie")
 		return false
 	}
-	value, err := rc.client.Get(context.Background(), sId).Result()
+	value, err := a.rc.Get(context.Background(), sId).Result()
 	if err != nil {
-		rc.l.Warn("getting session from redis", "err", err)
+		a.l.Warn("getting session from redis", "err", err)
 		return false
 	}
 	val, err := strconv.Atoi(value)
 	if err != nil {
-		rc.l.Error("converting val to int", "val", val)
+		a.l.Error("converting val to int", "val", val)
 		return false
 	}
 	if PermissionLevel(val) != level {
-		rc.l.Debug("Got session with wrong permission level", "uuid", sId, "permissionLevel", val, "requiredLevel", int8(level))
+		a.l.Debug("Got session with wrong permission level", "uuid", sId, "permissionLevel", val, "requiredLevel", int8(level))
 		return false
 	}
-	rc.l.Debug("Got session", "uuid", sId, "permissionLevel", val)
+	a.l.Debug("Got session", "uuid", sId, "permissionLevel", val)
 	return true
 }

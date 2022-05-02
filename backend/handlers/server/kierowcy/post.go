@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/tab-projekt-backend/schemas"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func (k *Kierowcy) createNew(rw http.ResponseWriter, r *http.Request) {
@@ -18,13 +17,7 @@ func (k *Kierowcy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Error creating new kierowca", http.StatusInternalServerError)
 		return
 	}
-	saltedPassword, err := bcrypt.GenerateFromPassword([]byte(kierowca.Haslo), bcrypt.DefaultCost)
-	if err != nil {
-		k.l.Error("marshaling", "err", err)
-		http.Error(rw, "Error salting password", http.StatusInternalServerError)
-		return
-	}
-	kierowca.Haslo = string(saltedPassword)
+
 	_, err = k.db.Model(&kierowca).Returning("*", &kierowca).Insert()
 	if err != nil {
 		k.l.Error("marshaling", "err", err)

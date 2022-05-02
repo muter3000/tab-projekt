@@ -30,7 +30,7 @@ func main() {
 	}
 	defer db.Close()
 
-	rc, err := redis.NewRedisClient(l)
+	rc, err := redis.NewAuthorizationClient(l, db)
 	if err != nil {
 		l.Error("connecting to redis", "err", err)
 	}

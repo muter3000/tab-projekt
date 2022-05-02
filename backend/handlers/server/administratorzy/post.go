@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/tab-projekt-backend/schemas"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func (a *Administratorzy) createNew(rw http.ResponseWriter, r *http.Request) {
@@ -22,13 +21,7 @@ func (a *Administratorzy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Error creating new administrator", http.StatusInternalServerError)
 		return
 	}
-	saltedPassword, err := bcrypt.GenerateFromPassword([]byte(administrator.Haslo), bcrypt.DefaultCost)
-	if err != nil {
-		a.l.Error("marshaling", "err", err)
-		http.Error(rw, "Error salting password", http.StatusInternalServerError)
-		return
-	}
-	administrator.Haslo = string(saltedPassword)
+
 	_, err = a.db.Model(&administrator).Returning("*", &administrator).Insert()
 	if err != nil {
 		a.l.Error("marshaling", "err", err)
