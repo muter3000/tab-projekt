@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/pgadmin" />
       <excludeFolder url="file://$MODULE_DIR$/postgres" />
       <excludeFolder url="file://$MODULE_DIR$/schemaspy-output" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

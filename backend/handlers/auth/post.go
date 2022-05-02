@@ -15,6 +15,9 @@ func (a *AuthHandler) CreateSession(rw http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	a.rc.CreateUserSession(rw, r, redis.PermissionLevel(level))
+	res := a.rc.CreateUserSession(rw, redis.PermissionLevel(level))
+	if res != true {
+		http.Error(rw, "Error creating session", http.StatusInternalServerError)
+	}
 	rw.WriteHeader(http.StatusCreated)
 }

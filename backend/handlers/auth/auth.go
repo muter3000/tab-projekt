@@ -26,4 +26,7 @@ func (a *AuthHandler) RegisterSubRouter(router *mux.Router) {
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("/{level:[0-2]{1}}", a.CreateSession)
+
+	del := r.Methods(http.MethodDelete).Subrouter()
+	del.HandleFunc("/", a.InvalidateSession)
 }
