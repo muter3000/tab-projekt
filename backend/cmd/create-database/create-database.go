@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/hashicorp/go-hclog"
-	"github.com/tab-projekt-backend/database/postgres"
+	"github.com/tab-projekt-backend/database/psql"
 	"github.com/tab-projekt-backend/schemas"
 )
 

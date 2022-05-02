@@ -7,7 +7,7 @@ import (
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
-	"github.com/tab-projekt-backend/database/postgres"
+	"github.com/tab-projekt-backend/database/psql"
 	"github.com/tab-projekt-backend/database/redis"
 	"github.com/tab-projekt-backend/handlers/auth"
 	"log"
