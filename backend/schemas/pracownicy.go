@@ -17,20 +17,18 @@ type Pracownik struct {
 	Haslo     string   `pg:"haslo" json:"haslo,omitempty"`
 }
 
-//Compile time check
-var _ pg.AfterScanHook = (*Pracownik)(nil)
-
-//
-
-func (p *Pracownik) AfterScan(context.Context) error {
-	p.Haslo = ""
-	return nil
-}
-
 var _ pg.BeforeInsertHook = (*Pracownik)(nil)
 
 func (p *Pracownik) BeforeInsert(ctx context.Context) (context.Context, error) {
-	password, err := bcrypt.GenerateFromPassword([]byte(p.Haslo), bcrypt.DefaultCost)
+	valid, err := p.validate()
+	if err != nil {
+		return nil, err
+	}
+	if !valid {
+		return nil, errors.New("user input from post request invalid")
+	}
+
+	password, err := bcrypt.GenerateFromPassword([]byte(p.Haslo), bcrypt.MinCost)
 	if err != nil {
 		return nil, err
 	}
@@ -49,24 +47,6 @@ type Kierowca struct {
 	Pracownik  `pg:",inherit"`
 	tableName  struct{} `pg:"kierowcy"`
 	KierowcaID int32    `pg:"kierowca_id,pk" json:"kierowca_id"`
-}
-
-var _ pg.BeforeInsertHook = (*Kierowca)(nil)
-
-func (k *Kierowca) BeforeInsert(ctx context.Context) (context.Context, error) {
-	valid, err := k.validate()
-	if err != nil {
-		return nil, err
-	}
-	if !valid {
-		return nil, errors.New("user input from post request invalid")
-	}
-
-	ctx2, err := k.Pracownik.BeforeInsert(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return ctx2, nil
 }
 
 type Administrator struct {

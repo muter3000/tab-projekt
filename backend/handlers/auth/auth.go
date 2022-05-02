@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"github.com/go-pg/pg/v10"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"github.com/tab-projekt-backend/database/redis"
@@ -10,12 +9,11 @@ import (
 
 type AuthHandler struct {
 	l    hclog.Logger
-	rc   *redis.RedisClient
-	pg   *pg.DB
+	rc   *redis.AuthorizationClient
 	path string
 }
 
-func NewAuthHandler(rc *redis.RedisClient) *AuthHandler {
+func NewAuthHandler(rc *redis.AuthorizationClient) *AuthHandler {
 	return &AuthHandler{rc: rc}
 }
 

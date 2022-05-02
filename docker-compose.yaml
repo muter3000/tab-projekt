@@ -84,6 +84,7 @@ services:
       PSQL_PASSWORD: admin2137
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      DB_ADMIN_PASS: admin2137
     ports:
       - "6000:6000"
     depends_on:
