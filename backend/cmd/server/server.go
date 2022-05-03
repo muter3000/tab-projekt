@@ -19,8 +19,10 @@ import (
 	"github.com/tab-projekt-backend/handlers/administratorzy"
 	"github.com/tab-projekt-backend/handlers/kategoria_prawa_jazdy"
 	"github.com/tab-projekt-backend/handlers/kierowcy"
+	"github.com/tab-projekt-backend/handlers/kursy"
 	"github.com/tab-projekt-backend/handlers/marki"
 	"github.com/tab-projekt-backend/handlers/pojazdy"
+	pojazdy_ciezarowe "github.com/tab-projekt-backend/handlers/pojazdy_ciezarowe"
 	"github.com/tab-projekt-backend/handlers/pracownicy"
 	"github.com/tab-projekt-backend/handlers/stanowisko_administracyjne"
 	"github.com/tab-projekt-backend/handlers/trasy"
@@ -54,6 +56,8 @@ func main() {
 		trasy.NewTrasy(l, db, "/trasy"),
 		pojazdy.NewPojazdy(l, db, "/pojazdy"),
 		marki.NewMarki(l, db, "/marki"),
+		pojazdy_ciezarowe.NewPojazdyCiezarowe(l, db, "/pojazdy_ciezarowe"),
+		kursy.NewKursy(l, db, "/kursy"),
 	}
 
 	for _, sr := range subRouters {
