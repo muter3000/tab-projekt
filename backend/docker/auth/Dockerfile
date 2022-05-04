@@ -12,6 +12,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /go/bin/auth ./cmd/auth/au
 
 FROM scratch
 # Copy our static executable.
-COPY --from=builder /go/bin/auth /go/bin/auth
+COPY --from=builder /go/bin/auth /auth
 # Run the hello binary.
-ENTRYPOINT ["/go/bin/auth"]
+ENTRYPOINT ["/auth"]

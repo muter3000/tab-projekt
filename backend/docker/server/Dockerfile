@@ -12,6 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /go/bin/server ./cmd/serve
 
 FROM scratch
 # Copy our static executable.
-COPY --from=builder /go/bin/server /go/bin/server
+COPY --from=builder /go/bin/server /server
+COPY ./swagger.yaml /swagger.yaml
 # Run the hello binary.
-ENTRYPOINT ["/go/bin/server"]
+ENTRYPOINT ["/server"]
