@@ -32,7 +32,7 @@ func (a *AuthHandler) CreateSession(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := a.rc.CreateUserSession(rw, userCreds.Login, userCreds.Password, redis.PermissionLevel(level))
+	res := a.ac.CreateUserSession(rw, userCreds.Login, userCreds.Password, redis.PermissionLevel(level))
 	if res != true {
 		http.Error(rw, "Error creating session", http.StatusUnauthorized)
 		return

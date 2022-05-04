@@ -9,12 +9,12 @@ import (
 
 type AuthHandler struct {
 	l    hclog.Logger
-	rc   *redis.AuthorizationClient
+	ac   *redis.AuthorizationClient
 	path string
 }
 
-func NewAuthHandler(rc *redis.AuthorizationClient) *AuthHandler {
-	return &AuthHandler{rc: rc}
+func NewAuthHandler(l hclog.Logger, ac *redis.AuthorizationClient, path string) *AuthHandler {
+	return &AuthHandler{l: l, ac: ac, path: path}
 }
 
 func (a *AuthHandler) RegisterSubRouter(router *mux.Router) {

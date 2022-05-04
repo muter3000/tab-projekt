@@ -15,7 +15,7 @@ func (a *AuthHandler) CheckAuthorization(rw http.ResponseWriter, r *http.Request
 		panic(err)
 	}
 
-	auth := a.rc.CheckAuthorization(r, redis.PermissionLevel(level))
+	auth := a.ac.CheckAuthorization(r, redis.PermissionLevel(level))
 	if auth == false {
 		http.Error(rw, "Error: not authorized", http.StatusUnauthorized)
 		return

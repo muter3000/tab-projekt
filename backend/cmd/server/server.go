@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/tab-projekt-backend/database/psql"
 	"github.com/tab-projekt-backend/handlers"
 	"github.com/tab-projekt-backend/handlers/server/administratorzy"
@@ -40,6 +41,12 @@ func main() {
 	}(db)
 
 	sm := mux.NewRouter()
+
+	g := sm.Methods(http.MethodGet).Subrouter()
+	sh := middleware.Redoc(middleware.RedocOpts{SpecURL: "/swagger.yaml"}, nil)
+	g.Handle("/docs", sh)
+	g.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+
 	subRouters := []handlers.SubRouter{
 		pracownicy.NewPracownicy(l, db, "/pracownicy"),
 		kierowcy.NewKierowcy(l, db, "/kierowcy"),

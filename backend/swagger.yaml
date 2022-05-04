@@ -1,0 +1,172 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  Administrator:
+    properties:
+      StanowiskoAdministracyjne:
+        $ref: '#/definitions/StanowiskoAdministracyjne'
+      administracja_id:
+        format: int32
+        type: integer
+        x-go-name: AdministracjaID
+      haslo:
+        type: string
+        x-go-name: Haslo
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      imie:
+        type: string
+        x-go-name: Imie
+      login:
+        type: string
+        x-go-name: Login
+      nazwisko:
+        type: string
+        x-go-name: Nazwisko
+      pesel:
+        type: string
+        x-go-name: Pesel
+      stanowisko_administracyjne_id:
+        format: int32
+        type: integer
+        x-go-name: StanowiskoAdministracyjneID
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  StanowiskoAdministracyjne:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      typ:
+        type: string
+        x-go-name: Typ
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+info:
+  description: Documentation of Workers API
+  title: Workers API
+  version: 1.0.0
+paths:
+  /administratorzy/:
+    get:
+      description: Returns list of administrators
+      operationId: ListAdministrators
+      responses:
+        "200":
+          $ref: '#/responses/administratorsResponse'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Administrators
+    post:
+      description: Creates a new administrator
+      operationId: CreateAdministrator
+      parameters:
+      - description: Administator to be registered
+        in: body
+        name: Body
+        schema:
+          properties:
+            haslo:
+              type: string
+              x-go-name: Haslo
+            imie:
+              type: string
+              x-go-name: Imie
+            login:
+              type: string
+              x-go-name: Login
+            nazwisko:
+              type: string
+              x-go-name: Nazwisko
+            pesel:
+              type: string
+              x-go-name: Pesel
+            stanowisko_administracyjne_id:
+              format: int64
+              type: integer
+              x-go-name: StanowiskoAdministracyjneId
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/administrator'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Administrators
+  /administratorzy/{id}:
+    get:
+      description: Returns list of administrators
+      operationId: GetAdministratorByID
+      parameters:
+      - description: The id of the wanted administrator
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/administrator'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Administrators
+  /auth/{level}:
+    post:
+      description: Returns list of administratorzy
+      operationId: CreateSession
+      parameters:
+      - description: 'The wanted access level: 1-Pracownik 2-Administrator 3-AdministratorDB'
+        format: int8
+        in: path
+        name: level
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "201":
+          $ref: '#/responses/success'
+        "400":
+          $ref: '#/responses/error400'
+        "500":
+          $ref: '#/responses/error500'
+      tags:
+      - Auth
+produces:
+- application/json
+responses:
+  administrator:
+    description: ""
+    schema:
+      $ref: '#/definitions/Administrator'
+  administratorsResponse:
+    description: A list of all registered administrators
+    schema:
+      items:
+        $ref: '#/definitions/Administrator'
+      type: array
+  error:
+    description: Registered error
+  error400:
+    description: Registered error coming from bad client request
+  error500:
+    description: Registered error coming from internal server error
+  success:
+    description: Session creation success
+    headers:
+      SessionID:
+        description: |-
+          in: cookie
+          name: session-id
+        type: string
+schemes:
+- http
+swagger: "2.0"
