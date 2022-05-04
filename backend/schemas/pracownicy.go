@@ -7,14 +7,23 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// swagger:model
 type Pracownik struct {
 	tableName struct{} `pg:"pracownicy"`
-	Id        int32    `pg:"id,pk" json:"id"`
-	Pesel     string   `pg:"pesel,unique" json:"pesel"`
-	Imie      string   `pg:"imie" json:"imie"`
-	Nazwisko  string   `pg:"nazwisko" json:"nazwisko"`
-	Login     string   `pg:"login,unique" json:"login"`
-	Haslo     string   `pg:"haslo" json:"haslo,omitempty"`
+	// unique: true
+	// required: true
+	Id int32 `pg:"id,pk" json:"id"`
+
+	Pesel string `pg:"pesel,unique" json:"pesel"`
+	// required: true
+	Imie string `pg:"imie" json:"imie"`
+	// required: true
+	Nazwisko string `pg:"nazwisko" json:"nazwisko"`
+	// unique: true
+	// required: true
+	Login string `pg:"login,unique" json:"login"`
+
+	Haslo string `pg:"haslo" json:"haslo,omitempty"`
 }
 
 var _ pg.BeforeInsertHook = (*Pracownik)(nil)

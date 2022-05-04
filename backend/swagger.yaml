@@ -16,12 +16,14 @@ definitions:
       id:
         format: int32
         type: integer
+        uniqueItems: true
         x-go-name: Id
       imie:
         type: string
         x-go-name: Imie
       login:
         type: string
+        uniqueItems: true
         x-go-name: Login
       nazwisko:
         type: string
@@ -33,6 +35,41 @@ definitions:
         format: int32
         type: integer
         x-go-name: StanowiskoAdministracyjneID
+    required:
+    - id
+    - imie
+    - nazwisko
+    - login
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  Pracownik:
+    properties:
+      haslo:
+        type: string
+        x-go-name: Haslo
+      id:
+        format: int32
+        type: integer
+        uniqueItems: true
+        x-go-name: Id
+      imie:
+        type: string
+        x-go-name: Imie
+      login:
+        type: string
+        uniqueItems: true
+        x-go-name: Login
+      nazwisko:
+        type: string
+        x-go-name: Nazwisko
+      pesel:
+        type: string
+        x-go-name: Pesel
+    required:
+    - id
+    - imie
+    - nazwisko
+    - login
     type: object
     x-go-package: github.com/tab-projekt-backend/schemas
   StanowiskoAdministracyjne:
@@ -72,6 +109,7 @@ paths:
         schema:
           properties:
             haslo:
+              description: Haslo has to be longer than 6 characters
               type: string
               x-go-name: Haslo
             imie:
@@ -79,17 +117,30 @@ paths:
               x-go-name: Imie
             login:
               type: string
+              uniqueItems: true
               x-go-name: Login
             nazwisko:
               type: string
               x-go-name: Nazwisko
             pesel:
+              description: Pesel of the specific administrator. Must be unique and
+                have 11 numbers to be correct.
               type: string
+              uniqueItems: true
               x-go-name: Pesel
             stanowisko_administracyjne_id:
+              description: Id of administrator's stanowisko, a negative value indicates
+                that he doesn't have one
               format: int64
               type: integer
               x-go-name: StanowiskoAdministracyjneId
+          required:
+          - login
+          - haslo
+          - imie
+          - nazwisko
+          - pesel
+          - stanowisko_administracyjne_id
           type: object
       responses:
         "200":

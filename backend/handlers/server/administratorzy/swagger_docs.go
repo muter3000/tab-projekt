@@ -51,12 +51,23 @@ type createAdministatorParams struct {
 	// Administator to be registered
 	// in: body
 	Body struct {
-		Haslo                       string `json:"haslo"`
-		Imie                        string `json:"imie"`
-		Login                       string `json:"login"`
-		Nazwisko                    string `json:"nazwisko"`
-		Pesel                       string `json:"pesel"`
-		StanowiskoAdministracyjneId int    `json:"stanowisko_administracyjne_id"`
+		// required: true
+		// unique: true
+		Login string `json:"login"`
+		// Haslo has to be longer than 6 characters
+		// required: true
+		Haslo string `json:"haslo"`
+		// required: true
+		Imie string `json:"imie"`
+		// required: true
+		Nazwisko string `json:"nazwisko"`
+		// Pesel of the specific administrator. Must be unique and have 11 numbers to be correct.
+		// unique: true
+		// required: true
+		Pesel string `json:"pesel"`
+		// Id of administrator's stanowisko, a negative value indicates that he doesn't have one
+		// required: true
+		StanowiskoAdministracyjneId int `json:"stanowisko_administracyjne_id"`
 	}
 }
 
