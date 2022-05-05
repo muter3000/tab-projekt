@@ -10,24 +10,25 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/tab-projekt-backend/database/psql"
+	"github.com/tab-projekt-backend/handlers"
+	"github.com/tab-projekt-backend/handlers/server/administratorzy"
+	"github.com/tab-projekt-backend/handlers/server/kategoria_prawa_jazdy"
+	"github.com/tab-projekt-backend/handlers/server/kierowcy"
+	"github.com/tab-projekt-backend/handlers/server/kursy"
+	"github.com/tab-projekt-backend/handlers/server/marki"
+	"github.com/tab-projekt-backend/handlers/server/pojazdy"
+	"github.com/tab-projekt-backend/handlers/server/pojazdy_ciezarowe"
+	"github.com/tab-projekt-backend/handlers/server/pracownicy"
+	"github.com/tab-projekt-backend/handlers/server/stanowisko_administracyjne"
+	"github.com/tab-projekt-backend/handlers/server/trasy"
+	"github.com/tab-projekt-backend/schemas"
+
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
-	"github.com/tab-projekt-backend/database"
-	"github.com/tab-projekt-backend/handlers"
-	"github.com/tab-projekt-backend/handlers/administratorzy"
-	"github.com/tab-projekt-backend/handlers/kategoria_prawa_jazdy"
-	"github.com/tab-projekt-backend/handlers/kierowcy"
-	"github.com/tab-projekt-backend/handlers/kursy"
-	"github.com/tab-projekt-backend/handlers/marki"
-	"github.com/tab-projekt-backend/handlers/pojazdy"
-	pojazdy_ciezarowe "github.com/tab-projekt-backend/handlers/pojazdy_ciezarowe"
-	"github.com/tab-projekt-backend/handlers/pracownicy"
-	"github.com/tab-projekt-backend/handlers/stanowisko_administracyjne"
-	"github.com/tab-projekt-backend/handlers/trasy"
-	"github.com/tab-projekt-backend/schemas"
 )
 
 func main() {
@@ -37,7 +38,7 @@ func main() {
 	}
 	l := hclog.Default()
 	l.SetLevel(hclog.Level(int32(logLevel)))
-	db, err := database.GetDB()
+	db, err := psql.GetDB()
 	if err != nil {
 		l.Error("connecting to db", "err", err)
 	}
@@ -77,9 +78,9 @@ func main() {
 		Addr:         bindAddress,                                      // configure the bind address
 		Handler:      ch(sm),                                           // set the default handler
 		ErrorLog:     l.StandardLogger(&hclog.StandardLoggerOptions{}), // set the logger for the server
-		ReadTimeout:  1000 * time.Millisecond,                          // max time to read request from the client
+		ReadTimeout:  500 * time.Millisecond,                           // max time to read request from the client
 		WriteTimeout: 1000 * time.Millisecond,                          // max time to write response to the client
-		IdleTimeout:  1200 * time.Millisecond,                          // max time for connections using TCP Keep-Alive
+		IdleTimeout:  12000 * time.Millisecond,                         // max time for connections using TCP Keep-Alive
 	}
 
 	// start the server

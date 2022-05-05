@@ -1,9 +1,21 @@
 version: '3.5'
 
 services:
+  create_database:
+    build:
+      context: ./backend
+      dockerfile: ./docker/create-database/Dockerfile
+    environment:
+      PSQL_HOST: postgres
+      PSQL_PORT: 5432
+      PSQL_DB: postgres
+      PSQL_USER: admin
+      PSQL_PASSWORD: admin2137
+    depends_on:
+      - postgres
   postgres:
     container_name: postgres_container
-    image: postgres
+    image: postgres:alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin2137}
@@ -14,10 +26,7 @@ services:
       - ./postgres:/data/postgres
     ports:
       - "30050:5432"
-    networks:
-      - postgres
     restart: unless-stopped
-
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
@@ -30,8 +39,6 @@ services:
       - ./sqlfiles:/home/sqlfiles
     ports:
       - "${PGADMIN_PORT:-5050}:80"
-    networks:
-      - postgres
     restart: unless-stopped
     depends_on:
       - postgres
@@ -44,10 +51,11 @@ services:
       - ./schemaspy-config:/config
     depends_on:
       - postgres
-    networks:
-      - postgres
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: ./docker/server/Dockerfile
+    restart: unless-stopped
     environment:
       PORT: 5000
       PSQL_HOST: postgres
@@ -61,8 +69,37 @@ services:
       - postgres
     ports:
       - "5000:5000"
-    networks:
+  auth:
+    build:
+      context: ./backend
+      dockerfile: ./docker/auth/Dockerfile
+    restart: unless-stopped
+    environment:
+      LOG_LEVEL: 2
+      PORT: 6000
+      PSQL_HOST: postgres
+      PSQL_PORT: 5432
+      PSQL_DB: postgres
+      PSQL_USER: admin
+      PSQL_PASSWORD: admin2137
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      DB_ADMIN_PASS: admin2137
+    ports:
+      - "6000:6000"
+    depends_on:
+      - redis
       - postgres
-networks:
-  postgres:
-    driver: bridge
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - cache:/data
+  nginx:
+    image: nginx:alpine
+volumes:
+  cache:
+    driver: local
