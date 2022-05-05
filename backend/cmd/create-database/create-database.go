@@ -14,12 +14,15 @@ func main() {
 		log.Error("connecting to db", "err", err)
 	}
 	defer db.Close()
+
+	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
+
 	models := []interface{}{
 		(*schemas.Pracownik)(nil),
 		(*schemas.StanowiskoAdministracyjne)(nil),
 		(*schemas.KategoriaPrawaJazdy)(nil),
-		(*schemas.Kierowca)(nil),
 		(*schemas.KategoriaKierowcy)(nil),
+		(*schemas.Kierowca)(nil),
 		(*schemas.Administrator)(nil),
 		(*schemas.Marka)(nil),
 		(*schemas.Pojazd)(nil),

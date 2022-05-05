@@ -15,7 +15,7 @@ func (k *Kursy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	var kurs []schemas.Kurs
-	err := k.db.Model(&kurs).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Relation("Pojazd.Marka").Select()
+	err := k.db.Model(&kurs).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Relation("Pojazd.Marka").Relation("Kierowca.Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get all", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kurs table", http.StatusInternalServerError)
@@ -45,7 +45,7 @@ func (k *Kursy) getByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	kurs := schemas.Kurs{Id: int32(id)}
-	err = k.db.Model(&kurs).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Relation("Pojazd.Marka").Select()
+	err = k.db.Model(&kurs).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Relation("Pojazd.Marka").Relation("Kierowca.Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kurs table", http.StatusInternalServerError)

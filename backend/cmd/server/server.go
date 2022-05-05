@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
@@ -26,6 +27,7 @@ import (
 	"github.com/tab-projekt-backend/handlers/pracownicy"
 	"github.com/tab-projekt-backend/handlers/stanowisko_administracyjne"
 	"github.com/tab-projekt-backend/handlers/trasy"
+	"github.com/tab-projekt-backend/schemas"
 )
 
 func main() {
@@ -45,6 +47,8 @@ func main() {
 
 		}
 	}(db)
+
+	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
 
 	sm := mux.NewRouter()
 	subRouters := []handlers.SubRouter{

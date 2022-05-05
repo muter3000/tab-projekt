@@ -50,6 +50,8 @@ type Kierowca struct {
 	Pracownik  `pg:",inherit"`
 	tableName  struct{} `pg:"kierowcy"`
 	KierowcaID int32    `pg:"kierowca_id,pk" json:"kierowca_id"`
+
+	Kategorie []KategoriaPrawaJazdy `pg:"many2many:kategoria_kierowcy,fk:kierowca_" json:"kategorie"`
 }
 
 var _ pg.BeforeInsertHook = (*Kierowca)(nil)
@@ -91,9 +93,7 @@ type KategoriaPrawaJazdy struct {
 }
 
 type KategoriaKierowcy struct {
-	tableName             struct{}             `pg:"kategoria_kierowcy"`
-	KierowcaID            int32                `pg:",notnull,on_delete:RESTRICT" json:"kierowca_id"`
-	Kierowca              *Kierowca            `pg:"rel:has-one"`
-	KategoriaPrawaJazdyID int32                `pg:",notnull,on_delete:RESTRICT" json:"kategoria_prawa_jazdy_id"`
-	KategoriaPrawaJazdy   *KategoriaPrawaJazdy `pg:"rel:has-one"`
+	tableName             struct{} `pg:"kategoria_kierowcy"`
+	KierowcaId            int32    `pg:",notnull,on_delete:RESTRICT,fk:kierowca_id,join_fk:kierowca_id" json:"kierowca_id"`
+	KategoriaPrawaJazdyId int32    `pg:",notnull,on_delete:RESTRICT,fk:id,join_fk:id" json:"kategoria_prawa_jazdy_id"`
 }
