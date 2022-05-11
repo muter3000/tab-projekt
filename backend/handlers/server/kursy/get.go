@@ -45,7 +45,7 @@ func (k *Kursy) getByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	kurs := schemas.Kurs{}
-	err = k.db.Model(&kurs).Where("id = ?", id).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Relation("Pojazd.Marka").Relation("Kierowca.Kategorie").Select()
+	err = k.db.Model(&kurs).Where("kursy.id = ?", id).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Relation("Pojazd.Marka").Relation("Kierowca.Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kurs table", http.StatusInternalServerError)

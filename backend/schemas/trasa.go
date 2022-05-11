@@ -3,14 +3,14 @@ package schemas
 import "time"
 
 type Trasa struct {
-	tableName             struct{} `pg:"trasy"`
+	tableName             struct{} `pg:"trasy,alias:trasy"`
 	Id                    int32    `pg:"id,pk" json:"id"`
 	MiejscowoscPoczatkowa string   `pg:"miejscowosc_poczatkowa" json:"miejscowosc_poczatkowa"`
 	MiejscowoscKoncowa    string   `pg:"miejscowosc_koncowa" json:"miejscowosc_koncowa"`
 }
 
 type Kurs struct {
-	tableName       struct{}  `pg:"kursy"`
+	tableName       struct{}  `pg:"kursy,alias:kursy"`
 	Id              int32     `pg:"id,pk" json:"id"`
 	DataRozpoczecia time.Time `pg:"data_rozpoczecia" json:"data_rozpoczecia"`
 	DataZakonczenia time.Time `pg:"data_zakonczenia" json:"data_zakonczenia"`

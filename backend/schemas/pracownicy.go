@@ -9,7 +9,7 @@ import (
 )
 
 type Pracownik struct {
-	tableName struct{} `pg:"pracownicy"`
+	tableName struct{} `pg:"pracownicy,alias:pracownicy"`
 	Id        int32    `pg:"id,pk" json:"id"`
 	Pesel     string   `pg:"pesel,unique" json:"pesel"`
 	Imie      string   `pg:"imie" json:"imie"`
@@ -46,7 +46,7 @@ func (p *Pracownik) AfterSelect(context.Context) error {
 
 type Kierowca struct {
 	Pracownik  `pg:",inherit"`
-	tableName  struct{} `pg:"kierowcy"`
+	tableName  struct{} `pg:"kierowcy,alias:kierowcy"`
 	KierowcaID int32    `pg:"kierowca_id,pk" json:"kierowca_id"`
 
 	Kategorie []KategoriaPrawaJazdy `pg:"many2many:kategoria_kierowcy,fk:kierowca_" json:"kategorie"`
@@ -54,26 +54,26 @@ type Kierowca struct {
 
 type Administrator struct {
 	Pracownik                   `pg:",inherit"`
-	tableName                   struct{}                   `pg:"administratorzy"`
+	tableName                   struct{}                   `pg:"administratorzy,alias:administratorzy"`
 	AdministracjaID             int32                      `pg:"administracja_id,pk" json:"administracja_id"`
 	StanowiskoAdministracyjneID int32                      `pg:",notnull,on_delete:RESTRICT" json:"stanowisko_administracyjne_id"`
 	StanowiskoAdministracyjne   *StanowiskoAdministracyjne `pg:"rel:has-one"`
 }
 
 type StanowiskoAdministracyjne struct {
-	tableName struct{} `pg:"stanowiska_administracyjne"`
+	tableName struct{} `pg:"stanowiska_administracyjne,alias:stanowiska_administracyjne"`
 	Id        int32    `pg:"id,pk" json:"id"`
 	Typ       string   `pg:"typ" json:"typ"`
 }
 
 type KategoriaPrawaJazdy struct {
-	tableName struct{} `pg:"kategorie_prawa_jazdy"`
+	tableName struct{} `pg:"kategorie_prawa_jazdy,alias:kategorie_prawa_jazdy"`
 	Id        int32    `pg:"id,pk" json:"id"`
 	Kategoria string   `pg:"kategoria" json:"kategoria"`
 }
 
 type KategoriaKierowcy struct {
-	tableName             struct{} `pg:"kategoria_kierowcy"`
+	tableName             struct{} `pg:"kategoria_kierowcy,alias:kategoria_kierowcy"`
 	KierowcaId            int32    `pg:",notnull,on_delete:RESTRICT,fk:kierowca_id,join_fk:kierowca_id" json:"kierowca_id"`
 	KategoriaPrawaJazdyId int32    `pg:",notnull,on_delete:RESTRICT,fk:id,join_fk:id" json:"kategoria_prawa_jazdy_id"`
 }
