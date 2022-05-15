@@ -2,6 +2,7 @@ package trasy
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -43,6 +44,7 @@ func (t *Trasy) getByID(rw http.ResponseWriter, r *http.Request) {
 
 	trasa := schemas.Trasa{}
 	err = t.db.Model(&trasa).Where("id = ?", id).Select()
+	fmt.Print(trasa)
 	if err != nil {
 		t.l.Error("while handling get by ID", "path", t.path, "error", err)
 		http.Error(rw, "Error getting trasa table", http.StatusInternalServerError)

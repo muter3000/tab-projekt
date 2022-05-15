@@ -22,6 +22,7 @@ func (k *Kursy) RegisterSubRouter(router *mux.Router) {
 	r := router.PathPrefix(k.path).Subrouter()
 	get := r.Methods(http.MethodGet).Subrouter()
 	get.HandleFunc("", k.getAll)
+	get.HandleFunc("/kierowca/{id:[0-9]+}", k.getByDriverID)
 	get.HandleFunc("/{id:[0-9]+}", k.getByID)
 
 	post := r.Methods(http.MethodPost).Subrouter()

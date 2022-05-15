@@ -61,3 +61,33 @@ func (k *Kursy) getByID(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (k *Kursy) getByDriverID(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	// convert the id into an integer and return
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		// should never happen
+		panic(err)
+	}
+	k.l.Debug("handling get all request", "path", k.path)
+
+	rw.Header().Add("Content-Type", "application/json")
+
+	var kurs []schemas.Kurs
+	err = k.db.Model(&kurs).Where("kursy.kierowca_id = ?", id).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Select()
+	if err != nil {
+		k.l.Error("while handling get all", "path", k.path, "error", err)
+		http.Error(rw, "Error getting kurs table", http.StatusInternalServerError)
+		return
+	}
+	for _, jedenKurs := range kurs {
+		jedenKurs.Kierowca.Haslo = ""
+	}
+	err = json.NewEncoder(rw).Encode(kurs)
+	if err != nil {
+		k.l.Error("err", "", err)
+		return
+	}
+}
