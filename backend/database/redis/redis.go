@@ -18,8 +18,7 @@ import (
 type PermissionLevel int8
 
 const (
-	None PermissionLevel = iota
-	Kierowca
+	Kierowca PermissionLevel = iota
 	Administator
 	AdministratorDB
 )

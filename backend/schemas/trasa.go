@@ -10,18 +10,18 @@ type Trasa struct {
 }
 
 type Kurs struct {
-	tableName       struct{}  `pg:"kursy,alias:kursy"`
-	Id              int32     `pg:"id,pk" json:"id"`
-	DataRozpoczecia time.Time `pg:"data_rozpoczecia" json:"data_rozpoczecia"`
-	DataZakonczenia time.Time `pg:"data_zakonczenia" json:"data_zakonczenia"`
-	CzasRozpoczecia time.Time `pg:"czas_rozpoczecia" json:"czas_rozpoczecia"`
-	CzasZakonczenia time.Time `pg:"czas_zakonczenia" json:"czas_zakonczenia"`
-	CzasPrzejazdu   int32     `pg:"czas_przejazdu" json:"czas_przejazdu"`
-	Ladunek         float32   `pg:"ladunek" json:"ladunek"`
-	TrasaID         int32     `pg:",notnull,on_delete:RESTRICT" json:"trasa_id"`
-	Trasa           *Trasa    `pg:"rel:has-one"`
-	KierowcaID      int32     `pg:",notnull,on_delete:RESTRICT" json:"kierowca_id"`
-	Kierowca        *Kierowca `pg:"rel:has-one"`
-	PojazdID        int32     `pg:",notnull,on_delete:RESTRICT" json:"pojazd_id"`
-	Pojazd          *Pojazd   `pg:"rel:has-one"`
+    tableName       struct{}  `pg:"kursy,alias:kursy"`
+    Id              int32     `pg:"id,pk" json:"id"`
+    DataRozpoczecia time.Time `pg:"data_rozpoczecia" json:"data_rozpoczecia"`
+    DataZakonczenia time.Time `pg:"data_zakonczenia" json:"data_zakonczenia"`
+    CzasRozpoczecia time.Time `pg:"czas_rozpoczecia" json:"czas_rozpoczecia"`
+    CzasZakonczenia time.Time `pg:"czas_zakonczenia" json:"czas_zakonczenia"`
+    CzasPrzejazdu   int32     `pg:"czas_przejazdu" json:"czas_przejazdu"`
+    Ladunek         float32   `pg:"ladunek" json:"ladunek"`
+    TrasaID         int32     `pg:",notnull,on_delete:RESTRICT" json:"trasa_id"`
+    Trasa           *Trasa    `pg:"rel:has-one"`
+    KierowcaID      int32     `pg:",notnull,on_delete:RESTRICT" json:"kierowca_id"`
+    Kierowca        *Kierowca `pg:"rel:has-one"`
+    PojazdID        int32     `pg:",notnull,on_delete:RESTRICT" json:"pojazd_id"`
+    Pojazd          *Pojazd   `pg:"rel:has-one"`
 }
