@@ -12,7 +12,7 @@ func (b *Bledy) createNew(rw http.ResponseWriter, r *http.Request) {
 	b.l.Debug("handling post request", "path", b.path)
 	blad := schemas.Blad{}
 	err := json.NewDecoder(r.Body).Decode(&blad)
-	if blad.Tytul == "" || blad.Opis == "" {
+	if blad.Tytul == "" || blad.Opis == "" || blad.Kategoria == "" {
 		http.Error(rw, "Wrong parameters passed", http.StatusBadRequest)
 		return
 	}
