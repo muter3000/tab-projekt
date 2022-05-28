@@ -7,6 +7,7 @@ type Pojazd struct {
 	PojemnoscSilnika   int32    `pg:"pojemnosc_silnika" json:"pojemnosc_silnika"`
 	MarkaID            int32    `pg:",notnull,on_delete:RESTRICT" json:"marka_id"`
 	NumerRejestracyjny string   `pg:"numer_rejestracyjny,unique" json:"numer_rejestracyjny"`
+	Model              string   `pg:"model" json:"model"`
 	Marka              *Marka   `pg:"rel:has-one"`
 }
 

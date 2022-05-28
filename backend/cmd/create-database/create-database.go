@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/hashicorp/go-hclog"
 	"github.com/tab-projekt-backend/database/psql"
@@ -30,6 +31,7 @@ func main() {
 		(*schemas.PojazdCiezarowy)(nil),
 		(*schemas.Trasa)(nil),
 		(*schemas.Kurs)(nil),
+		(*schemas.Blad)(nil),
 	}
 
 	for _, model := range models {

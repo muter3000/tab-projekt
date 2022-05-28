@@ -13,6 +13,7 @@ import (
 	"github.com/tab-projekt-backend/database/psql"
 	"github.com/tab-projekt-backend/handlers"
 	"github.com/tab-projekt-backend/handlers/server/administratorzy"
+	"github.com/tab-projekt-backend/handlers/server/bledy"
 	"github.com/tab-projekt-backend/handlers/server/kategoria_prawa_jazdy"
 	"github.com/tab-projekt-backend/handlers/server/kierowcy"
 	"github.com/tab-projekt-backend/handlers/server/kursy"
@@ -63,6 +64,7 @@ func main() {
 		marki.NewMarki(l, db, "/marki"),
 		pojazdy_ciezarowe.NewPojazdyCiezarowe(l, db, "/pojazdy_ciezarowe"),
 		kursy.NewKursy(l, db, "/kursy"),
+		bledy.NewBledy(l, db, "/bledy"),
 	}
 
 	for _, sr := range subRouters {
