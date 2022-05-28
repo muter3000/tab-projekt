@@ -37,6 +37,7 @@ func (b *Bledy) getByID(rw http.ResponseWriter, r *http.Request) {
 		// should never happen
 		panic(err)
 	}
+
 	b.l.Debug("handling get by ID request", "path", b.path, "id", id)
 
 	rw.Header().Add("Content-Type", "application/json")

@@ -32,6 +32,18 @@ import (
 	"github.com/hashicorp/go-hclog"
 )
 
+// type dbLogger struct{}
+
+// func (d dbLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
+// 	return c, nil
+// }
+
+// func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
+// 	value, _ := q.FormattedQuery()
+// 	fmt.Println(string(value))
+// 	return nil
+// }
+
 func main() {
 	logLevel, err := strconv.Atoi(os.Getenv("LOG_LEVEL"))
 	if err != nil {
@@ -49,6 +61,8 @@ func main() {
 
 		}
 	}(db)
+
+	// db.AddQueryHook(dbLogger{})
 
 	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
 
