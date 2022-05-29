@@ -4,18 +4,38 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/go-pg/pg/v10"
 	"github.com/gorilla/mux"
 	"github.com/tab-projekt-backend/schemas"
 )
 
-func (b *Bledy) getAll(rw http.ResponseWriter, _ *http.Request) {
+func (b *Bledy) getAll(rw http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	var dataUtworzeniaMin time.Time
+	if len(query["data_utworzenia_min"]) > 0 {
+		dataUtworzeniaMin, _ = time.Parse(time.RFC3339, query["data_utworzenia_min"][0])
+	}
+	var dataUtworzeniaMax time.Time
+	if len(query["data_utworzenia_max"]) > 0 {
+		dataUtworzeniaMax, _ = time.Parse(time.RFC3339, query["data_utworzenia_max"][0])
+	}
 	b.l.Debug("handling get all request", "path", b.path)
 
 	rw.Header().Add("Content-Type", "application/json")
 
 	var blad []schemas.Blad
-	err := b.db.Model(&blad).Select()
+	err := b.db.Model(&blad).
+		WhereGroup(func(q *pg.Query) (*pg.Query, error) {
+			q = q.WhereOr("data_utworzenia >= ?", dataUtworzeniaMin).WhereOr("TRUE = ?", dataUtworzeniaMin.IsZero())
+			return q, nil
+		}).
+		WhereGroup(func(q *pg.Query) (*pg.Query, error) {
+			q = q.WhereOr("data_utworzenia <= ?", dataUtworzeniaMax).WhereOr("TRUE = ?", dataUtworzeniaMax.IsZero())
+			return q, nil
+		}).
+		Select()
 	if err != nil {
 		b.l.Error("while handling get all", "path", b.path, "error", err)
 		http.Error(rw, "Error getting blad table", http.StatusInternalServerError)
