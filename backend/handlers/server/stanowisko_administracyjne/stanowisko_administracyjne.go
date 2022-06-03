@@ -26,7 +26,7 @@ func (sa *Stanowisko_administracyjne) RegisterSubRouter(router *mux.Router) {
 	get.HandleFunc("", sa.getAll)
 	get.HandleFunc("/{id:[0-9]+}", sa.getByID)
 
-	get.Use(auth_middleware.NewAuthorisationMiddleware(sa.l, auth_middleware.Authorizer{Level: redis.Administator}).Middleware)
+	get.Use(auth_middleware.NewAuthorisationMiddleware(sa.l, auth_middleware.Authorizer{Level: redis.Administrator}).Middleware)
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", sa.createNew)
