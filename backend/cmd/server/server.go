@@ -73,8 +73,6 @@ func main() {
 	g := sm.Methods(http.MethodGet).Subrouter()
 	sh := middleware.Redoc(middleware.RedocOpts{SpecURL: "/swagger.yaml"}, nil)
 
-	sm.Use(LoggerMiddleware)
-
 	g.Handle("/docs", sh)
 	g.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
