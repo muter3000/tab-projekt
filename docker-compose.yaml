@@ -65,6 +65,8 @@ services:
       PSQL_PASSWORD: admin2137
       #https://pkg.go.dev/github.com/hashicorp/go-hclog@v1.2.0#Level
       LOG_LEVEL: 2
+      AUTH_HOST: auth
+      AUTH_PORT: 6000
     depends_on:
       - postgres
     ports:

@@ -46,6 +46,13 @@ import (
 // 	return nil
 // }
 
+func LoggerMiddleware(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		hclog.Default().Debug("PATH", request.URL)
+		h.ServeHTTP(writer, request)
+	})
+}
+
 func main() {
 	logLevel, err := strconv.Atoi(os.Getenv("LOG_LEVEL"))
 	if err != nil {
@@ -72,6 +79,9 @@ func main() {
 
 	g := sm.Methods(http.MethodGet).Subrouter()
 	sh := middleware.Redoc(middleware.RedocOpts{SpecURL: "/swagger.yaml"}, nil)
+
+	sm.Use(LoggerMiddleware)
+
 	g.Handle("/docs", sh)
 	g.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
