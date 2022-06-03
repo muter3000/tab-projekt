@@ -3,12 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/go-openapi/runtime/middleware"
-	"github.com/tab-projekt-backend/database/psql"
-	"github.com/tab-projekt-backend/handlers"
-	"github.com/tab-projekt-backend/handlers/server/administratorzy"
-	"github.com/tab-projekt-backend/handlers/server/kierowcy"
-	"github.com/tab-projekt-backend/handlers/server/pracownicy"
 	"log"
 	"net/http"
 	"os"
@@ -16,11 +10,41 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/tab-projekt-backend/database/psql"
+	"github.com/tab-projekt-backend/handlers"
+	"github.com/tab-projekt-backend/handlers/server/administratorzy"
+	"github.com/tab-projekt-backend/handlers/server/bledy"
+	"github.com/tab-projekt-backend/handlers/server/kategoria_prawa_jazdy"
+	"github.com/tab-projekt-backend/handlers/server/kierowcy"
+	"github.com/tab-projekt-backend/handlers/server/kursy"
+	"github.com/tab-projekt-backend/handlers/server/marki"
+	"github.com/tab-projekt-backend/handlers/server/pojazdy"
+	"github.com/tab-projekt-backend/handlers/server/pojazdy_ciezarowe"
+	"github.com/tab-projekt-backend/handlers/server/pracownicy"
+	"github.com/tab-projekt-backend/handlers/server/stanowisko_administracyjne"
+	"github.com/tab-projekt-backend/handlers/server/trasy"
+	"github.com/tab-projekt-backend/schemas"
+
 	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 )
+
+// type dbLogger struct{}
+
+// func (d dbLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
+// 	return c, nil
+// }
+
+// func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
+// 	value, _ := q.FormattedQuery()
+// 	fmt.Println(string(value))
+// 	return nil
+// }
 
 func main() {
 	logLevel, err := strconv.Atoi(os.Getenv("LOG_LEVEL"))
@@ -40,6 +64,10 @@ func main() {
 		}
 	}(db)
 
+	// db.AddQueryHook(dbLogger{})
+
+	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
+
 	sm := mux.NewRouter()
 
 	g := sm.Methods(http.MethodGet).Subrouter()
@@ -51,6 +79,14 @@ func main() {
 		pracownicy.NewPracownicy(l, db, "/pracownicy"),
 		kierowcy.NewKierowcy(l, db, "/kierowcy"),
 		administratorzy.NewAdministratorzy(l, db, "/administracja"),
+		stanowisko_administracyjne.NewStanowiskoAdministracyjne(l, db, "/stanowisko_administracyjne"),
+		kategoria_prawa_jazdy.NewKategoriaPrawaJazdy(l, db, "/kategoria_prawa_jazdy"),
+		trasy.NewTrasy(l, db, "/trasy"),
+		pojazdy.NewPojazdy(l, db, "/pojazdy"),
+		marki.NewMarki(l, db, "/marki"),
+		pojazdy_ciezarowe.NewPojazdyCiezarowe(l, db, "/pojazdy_ciezarowe"),
+		kursy.NewKursy(l, db, "/kursy"),
+		bledy.NewBledy(l, db, "/bledy"),
 	}
 
 	for _, sr := range subRouters {

@@ -15,7 +15,7 @@ func (k *Kierowcy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	var kierowcy []schemas.Kierowca
-	err := k.db.Model(&kierowcy).Select()
+	err := k.db.Model(&kierowcy).Relation("Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get all", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
@@ -41,8 +41,8 @@ func (k *Kierowcy) getByID(rw http.ResponseWriter, r *http.Request) {
 
 	rw.Header().Add("Content-Type", "application/json")
 
-	kierowca := schemas.Kierowca{KierowcaID: int32(id)}
-	err = k.db.Model(&kierowca).Select()
+	kierowca := schemas.Kierowca{}
+	err = k.db.Model(&kierowca).Where("kierowca_id = ?", id).Relation("Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
@@ -67,7 +67,7 @@ func (k *Kierowcy) getByPesel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	kierowca := schemas.Kierowca{}
-	err := k.db.Model(&kierowca).Where("pesel = ?", pesel).Select()
+	err := k.db.Model(&kierowca).Relation("Kategorie").Where("pesel = ?", pesel).Select()
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)

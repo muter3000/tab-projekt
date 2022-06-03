@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/hashicorp/go-hclog"
 	"github.com/tab-projekt-backend/database/psql"
@@ -15,18 +16,22 @@ func main() {
 		log.Error("connecting to db", "err", err)
 	}
 	defer db.Close()
+
+	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
+
 	models := []interface{}{
 		(*schemas.Pracownik)(nil),
 		(*schemas.StanowiskoAdministracyjne)(nil),
 		(*schemas.KategoriaPrawaJazdy)(nil),
-		(*schemas.Kierowca)(nil),
 		(*schemas.KategoriaKierowcy)(nil),
+		(*schemas.Kierowca)(nil),
 		(*schemas.Administrator)(nil),
 		(*schemas.Marka)(nil),
 		(*schemas.Pojazd)(nil),
 		(*schemas.PojazdCiezarowy)(nil),
 		(*schemas.Trasa)(nil),
 		(*schemas.Kurs)(nil),
+		(*schemas.Blad)(nil),
 	}
 
 	for _, model := range models {

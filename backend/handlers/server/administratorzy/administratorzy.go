@@ -21,10 +21,10 @@ func NewAdministratorzy(l hclog.Logger, db *pg.DB, path string) *Administratorzy
 func (a *Administratorzy) RegisterSubRouter(router *mux.Router) {
 	r := router.PathPrefix(a.path).Subrouter()
 	get := r.Methods(http.MethodGet).Subrouter()
-	get.HandleFunc("/", a.getAll)
+	get.HandleFunc("", a.getAll)
 	get.HandleFunc("/pesel/{pesel:[0-9]{11}}", a.getByPesel)
 	get.HandleFunc("/{id:[0-9]+}", a.getByID)
 
 	post := r.Methods(http.MethodPost).Subrouter()
-	post.HandleFunc("/", a.createNew)
+	post.HandleFunc("", a.createNew)
 }

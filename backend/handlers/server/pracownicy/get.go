@@ -2,10 +2,11 @@ package pracownicy
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"github.com/tab-projekt-backend/schemas"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
+	"github.com/tab-projekt-backend/schemas"
 )
 
 func (p *Pracownicy) getAll(rw http.ResponseWriter, _ *http.Request) {
@@ -42,8 +43,8 @@ func (p *Pracownicy) getByID(rw http.ResponseWriter, r *http.Request) {
 
 	rw.Header().Add("Content-Type", "application/json")
 
-	pracownik := schemas.Pracownik{Id: int32(id)}
-	err = p.db.Model(&pracownik).Select()
+	pracownik := schemas.Pracownik{}
+	err = p.db.Model(&pracownik).Where("id = ?", id).Select()
 	if err != nil {
 		p.l.Error("while handling get by ID", "path", p.path, "error", err)
 		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)

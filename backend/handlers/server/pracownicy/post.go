@@ -31,7 +31,8 @@ func (p *Pracownicy) createNew(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rw.Header().Add("Content-Type", "application/json")
+	pracownik.Haslo = ""
+
 	err = json.NewEncoder(rw).Encode(pracownik)
 	if err != nil {
 		http.Error(rw, "Error marshaling new pracownik", http.StatusBadRequest)

@@ -3,6 +3,7 @@ package schemas
 import (
 	"context"
 	"errors"
+
 	"github.com/go-pg/pg/v10"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -45,42 +46,43 @@ func (p *Pracownik) BeforeInsert(ctx context.Context) (context.Context, error) {
 	return ctx, nil
 }
 
-var _ pg.AfterInsertHook = (*Pracownik)(nil)
+var _ pg.AfterSelectHook = (*Pracownik)(nil)
 
-func (p *Pracownik) AfterInsert(context.Context) error {
+func (p *Pracownik) AfterSelect(context.Context) error {
 	p.Haslo = ""
 	return nil
 }
 
 type Kierowca struct {
 	Pracownik  `pg:",inherit"`
-	tableName  struct{} `pg:"kierowcy"`
+	tableName  struct{} `pg:"kierowcy,alias:kierowcy"`
 	KierowcaID int32    `pg:"kierowca_id,pk" json:"kierowca_id"`
+
+	Kategorie []KategoriaPrawaJazdy `pg:"many2many:kategoria_kierowcy,fk:kierowca_" json:"kategorie"`
 }
 
 type Administrator struct {
 	Pracownik                   `pg:",inherit"`
-	tableName                   struct{}                   `pg:"administratorzy"`
+	tableName                   struct{}                   `pg:"administratorzy,alias:administratorzy"`
 	AdministracjaID             int32                      `pg:"administracja_id,pk" json:"administracja_id"`
-	StanowiskoAdministracyjneID int32                      `json:"stanowisko_administracyjne_id"`
+	StanowiskoAdministracyjneID int32                      `pg:",notnull,on_delete:RESTRICT" json:"stanowisko_administracyjne_id"`
 	StanowiskoAdministracyjne   *StanowiskoAdministracyjne `pg:"rel:has-one"`
 }
+
 type StanowiskoAdministracyjne struct {
-	tableName struct{} `pg:"stanowiska_administracyjne"`
+	tableName struct{} `pg:"stanowiska_administracyjne,alias:stanowiska_administracyjne"`
 	Id        int32    `pg:"id,pk" json:"id"`
 	Typ       string   `pg:"typ" json:"typ"`
 }
 
 type KategoriaPrawaJazdy struct {
-	tableName struct{} `pg:"kategorie_prawa_jazdy"`
+	tableName struct{} `pg:"kategorie_prawa_jazdy,alias:kategorie_prawa_jazdy"`
 	Id        int32    `pg:"id,pk" json:"id"`
 	Kategoria string   `pg:"kategoria" json:"kategoria"`
 }
 
 type KategoriaKierowcy struct {
-	tableName             struct{}             `pg:"kategoria_kierowcy"`
-	KierowcaID            int32                `json:"kierowca_id"`
-	Kierowca              *Kierowca            `pg:"rel:has-one"`
-	KategoriaPrawaJazdyID int32                `json:"kategoria_prawa_jazdy_id"`
-	KategoriaPrawaJazdy   *KategoriaPrawaJazdy `pg:"rel:has-one"`
+	tableName             struct{} `pg:"kategoria_kierowcy,alias:kategoria_kierowcy"`
+	KierowcaId            int32    `pg:",notnull,on_delete:RESTRICT,fk:kierowca_id,join_fk:kierowca_id" json:"kierowca_id"`
+	KategoriaPrawaJazdyId int32    `pg:",notnull,on_delete:RESTRICT,fk:id,join_fk:id" json:"kategoria_prawa_jazdy_id"`
 }

@@ -1,27 +1,27 @@
-package pracownicy
+package pojazdy
 
 import (
+	"net/http"
+
 	"github.com/go-pg/pg/v10"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
-	"net/http"
 )
 
-type Pracownicy struct {
+type Pojazdy struct {
 	l    hclog.Logger
 	db   *pg.DB
 	path string
 }
 
-func NewPracownicy(l hclog.Logger, db *pg.DB, path string) *Pracownicy {
-	return &Pracownicy{l: l, db: db, path: path}
+func NewPojazdy(l hclog.Logger, db *pg.DB, path string) *Pojazdy {
+	return &Pojazdy{l: l, db: db, path: path}
 }
 
-func (p *Pracownicy) RegisterSubRouter(router *mux.Router) {
+func (p *Pojazdy) RegisterSubRouter(router *mux.Router) {
 	r := router.PathPrefix(p.path).Subrouter()
 	get := r.Methods(http.MethodGet).Subrouter()
 	get.HandleFunc("", p.getAll)
-	get.HandleFunc("/pesel/{pesel:[0-9]{11}}", p.getByPesel)
 	get.HandleFunc("/{id:[0-9]+}", p.getByID)
 
 	post := r.Methods(http.MethodPost).Subrouter()
