@@ -46,13 +46,6 @@ import (
 // 	return nil
 // }
 
-func LoggerMiddleware(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		hclog.Default().Debug("PATH", request.URL)
-		h.ServeHTTP(writer, request)
-	})
-}
-
 func main() {
 	logLevel, err := strconv.Atoi(os.Getenv("LOG_LEVEL"))
 	if err != nil {
