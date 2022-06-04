@@ -382,6 +382,19 @@ paths:
     get:
       description: Zwraca wszystkie bledy
       operationId: AllBledy
+      parameters:
+        - in: query
+          name: data_utworzenia_min
+          schema:
+            type: string
+            format: "date-time"
+          description: Minimalna data utworzenia
+        - in: query
+          name: data_utworzenia_max
+          schema:
+            type: string
+            format: "date-time"
+          description: Maksymalna data utworzenia
       responses:
         "200":
           $ref: '#/responses/bladResponseMultiple'
@@ -607,6 +620,46 @@ paths:
     get:
       description: Zwraca wszystkie kursy
       operationId: AllKursy
+      parameters:
+        - in: query
+          name: data_roczpoczecia_min
+          schema:
+            type: string
+            format: "date-time"
+          description: Minimalna data rozpoczecia
+        - in: query
+          name: data_roczpoczecia_max
+          schema:
+            type: string
+            format: "date-time"
+          description: Maksymalna data rozpoczecia
+        - in: query
+          name: data_zakonczenia_min
+          schema:
+            type: string
+            format: "date-time"
+          description: Minimalna data zakonczenia
+        - in: query
+          name: data_zakonczenia_max
+          schema:
+            type: string
+            format: "date-time"
+          description: Maksymalna data zakonczenia
+        - in: query
+          name: imie_pracownika
+          schema:
+            type: string
+          description: Imie pracownika
+        - in: query
+          name: nazwisko_pracownika
+          schema:
+            type: string
+          description: Nazwisko pracownika
+        - in: query
+          name: marka
+          schema:
+            type: string
+          description: Marka
       responses:
         "200":
           $ref: '#/responses/kursResponseMultiple'
@@ -684,7 +737,7 @@ paths:
       tags:
       - Kursy
     patch:
-      description: Aktualizuje jeden kurs
+      description: Aktualizuje jeden kurs przez kierowce
       operationId: UpdateKursByID
       parameters:
       - description: Id kursu
