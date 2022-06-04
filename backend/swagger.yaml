@@ -162,10 +162,9 @@ definitions:
         format: int32
         type: integer
         x-go-name: Id
-      numer_silnika:
-        format: int32
-        type: integer
-        x-go-name: NumerSilnika
+      vin:
+        type: string
+        x-go-name: Vin
       pojemnosc_silnika:
         format: int32
         type: integer
@@ -190,9 +189,8 @@ definitions:
         format: int32
         type: integer
         x-go-name: Id
-      numer_silnika:
-        format: int32
-        type: integer
+      vin:
+        type: string
         x-go-name: NumerSilnika
       pojemnosc_silnika:
         format: int32
@@ -296,22 +294,23 @@ info:
   title: Workers API
   version: 1.0.0
 paths:
+
   /administratorzy/:
     get:
-      description: Returns list of administrators
-      operationId: AllAdministrators
+      description: Zwraca wszystkich pracownikow administracji
+      operationId: AllAdministratorzy
       responses:
         "200":
           $ref: '#/responses/administratorsResponseMultiple'
         "500":
           $ref: '#/responses/error'
       tags:
-      - Administrators
+      - Administratorzy
     post:
-      description: Creates a new administrator
+      description: Tworzy nowego pracownika administracji
       operationId: CreateAdministrator
       parameters:
-      - description: Administator to be registered
+      - description: Nowy Administrator
         in: body
         name: Body
         schema:
@@ -356,13 +355,13 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Administrators
+      - Administratorzy
   /administratorzy/{id}:
     get:
-      description: Returns single administrator
+      description: Zwraca pojedynczego pracownika administracji
       operationId: GetAdministratorByID
       parameters:
-      - description: The id of the wanted administrator
+      - description: Id pracownika administracji
         format: int32
         in: path
         name: id
@@ -377,23 +376,24 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Administrators
+      - Administratorzy
+
   /bledy/:
     get:
-      description: Returns list of errors
-      operationId: AllErrors
+      description: Zwraca wszystkie bledy
+      operationId: AllBledy
       responses:
         "200":
           $ref: '#/responses/bladResponseMultiple'
         "500":
           $ref: '#/responses/error'
       tags:
-      - Errors
+      - Bledy
     post:
-      description: Creates a new error
-      operationId: CreateError
+      description: Tworzy nowy blad
+      operationId: CreateBlad
       parameters:
-      - description: New error
+      - description: Nowy blad
         in: body
         name: Body
         schema:
@@ -421,13 +421,13 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Errors
+      - Bledy
   /bledy/{id}:
     get:
-      description: Returns single error
-      operationId: GetErrorByID
+      description: Zwraca pojedynczy blad
+      operationId: GetBladByID
       parameters:
-      - description: The id of the wanted error
+      - description: Id bledu
         format: int32
         in: path
         name: id
@@ -442,23 +442,24 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Errors
+      - Bledy
+
   /kategoria_prawa_jazdy/:
     get:
-      description: Returns list of driver license categories
-      operationId: AllDriverLicensesCategories
+      description: Zwraca wszystkie kategorie prawa jazdy
+      operationId: AllKategoriePrawaJazdy
       responses:
         "200":
           $ref: '#/responses/kategoriaPrawaJazdyResponseMultiple'
         "500":
           $ref: '#/responses/error'
       tags:
-      - DriverLicenseCategories
+      - KategoriePrawaJazdy
     post:
-      description: Creates a new driver license category
-      operationId: CreateDriverLicenseCategory
+      description: Tworzy nowa kategorie prawa jazdy
+      operationId: CreateKategoriaPrawaJazdy
       parameters:
-      - description: New driver license category
+      - description: Nowa kategoria prawa jazdy
         in: body
         name: Body
         schema:
@@ -475,13 +476,13 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - DriverLicenseCategories
+      - KategoriePrawaJazdy
   /kategoria_prawa_jazdy/{id}:
     get:
-      description: Returns single driver license category
-      operationId: GetDriverLicenseByID
+      description: Zwraca pojedyncza kategorie prawa jazdy
+      operationId: GetKategoriaPrawaJazdyID
       parameters:
-      - description: The id of the wanted driver license category
+      - description: Id kategorii prawa jazdy
         format: int32
         in: path
         name: id
@@ -496,11 +497,11 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - DriverLicenseCategories
-
+      - KategoriePrawaJazdy
+      
   /kierowcy/:
     get:
-      description: Returns list of drivers
+      description: Zwraca wszystkich kierowcow
       operationId: AllDrivers
       responses:
         "200":
@@ -508,12 +509,12 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Drivers
+      - Kierowcy
     post:
-      description: Creates a new driver
-      operationId: CreateDriver
+      description: Tworzy nowego kierowce
+      operationId: CreateKierowca
       parameters:
-      - description: New driver
+      - description: Nowy kierowca
         in: body
         name: Body
         schema:
@@ -538,12 +539,21 @@ paths:
               type: string
               uniqueItems: true
               x-go-name: Pesel
+            kategorie:
+              description: Array of ids from the KategoriaPrawaJazdy table
+              type: array
+              items:
+                id:
+                  type: integer
+                  format: int32
+                  x-go-name: Id
           required:
           - haslo
           - imie
           - login
           - nazwisko
           - pesel
+          - kategorie
           type: object
       responses:
         "200":
@@ -551,19 +561,19 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Drivers
+      - Kierowcy
   /kierowcy/{id}:
     get:
-      description: Returns single driver
-      operationId: GetDriverByID
+      description: Zwraca pojedynczego kierowce
+      operationId: GetKierowcaByID
       parameters:
-      - description: The id of the wanted driver
+      - description: Id kierowcy
         format: int32
         in: path
         name: id
         required: true
         type: integer
-        x-go-name: Id
+        x-go-name: KierowcaID
       responses:
         "200":
           $ref: '#/responses/kierowcaResponseSingle'
@@ -572,13 +582,13 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Drivers
+      - Kierowcy
   /kierowcy/pesel/{pesel}:
     get:
-      description: Returns single driver
-      operationId: GetDriverByID
+      description: Zwraca pojedynczego kierowce
+      operationId: GetKierowcaByPESEL
       parameters:
-      - description: The pesel of the wanted driver
+      - description: Pesel kierowcy
         in: path
         name: pesel
         required: true
@@ -592,7 +602,524 @@ paths:
         "500":
           $ref: '#/responses/error'
       tags:
-      - Drivers
+      - Kierowcy
+  /kursy/:
+    get:
+      description: Zwraca wszystkie kursy
+      operationId: AllKursy
+      responses:
+        "200":
+          $ref: '#/responses/kursResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Kursy
+    post:
+      description: Tworzy nowy kurs
+      operationId: CreateKurs
+      parameters:
+      - description: Nowy kurs
+        in: body
+        name: Body
+        schema:
+          properties:
+            data_rozpoczecia:
+              type: string
+              format: "date-time"
+              x-go-name: DataRozpoczecia
+            data_zakonczenia:
+              type: string
+              format: "date-time"
+              x-go-name: DataZakonczenia
+            ladunek:
+              format: float
+              type: float
+              x-go-name: Ladunek
+            trasa_id:
+              format: int32
+              type: integer
+              x-go-name: TrasaID
+            kierowca_id:
+              format: int32
+              type: integer
+              x-go-name: KierowcaID
+            pojazd_id:
+              format: int32
+              type: integer
+              x-go-name: PojazdID
+          required:
+          - data_rozpoczecia
+          - data_zakonczenia
+          - ladunek
+          - trasa_id
+          - kierowca_id
+          - pojazd_id
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/kursResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Kursy
+  /kurs/{id}:
+    get:
+      description: Zwraca pojedynczy kurs
+      operationId: GetKursByID
+      parameters:
+      - description: Id kursu
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/kursResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Kursy
+    patch:
+      description: Aktualizuje jeden kurs
+      operationId: UpdateKursByID
+      parameters:
+      - description: Id kursu
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      - description: The updated values
+        in: body
+        name: Body
+        schema:
+          properties:
+            czas_rozpoczecia:
+              type: string
+              format: "date-time"
+              x-go-name: CzasRozpoczecia
+            czas_zakonczenia:
+              type: string
+              format: "date-time"
+              x-go-name: CzasZakonczenia
+            czas_przejazdu:
+              format: int32
+              type: integer
+              x-go-name: CzasPrzejazdu
+          required:
+          - czas_rozpoczecia
+          - czas_zakonczenia
+          - czas_przejazdu
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/kursResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Kursy
+
+  /marki/:
+    get:
+      description: Zwraca wszystkie marki
+      operationId: AllMarki
+      responses:
+        "200":
+          $ref: '#/responses/markaResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Marki
+    post:
+      description: Tworzy nowa marka
+      operationId: CreateMarka
+      parameters:
+      - description: Nowa marka
+        in: body
+        name: Body
+        schema:
+          properties:
+            nazwa:
+              type: string
+              x-go-name: Nazwa
+          required:
+          - nazwa
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/markaResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Marki
+  /marki/{id}:
+    get:
+      description: Zwraca pojedyncza marke
+      operationId: GetMarkaByID
+      parameters:
+      - description: Id marki
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/markaResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Marki
+
+  /pojazdy/:
+    get:
+      description: Zwraca wszystkie pojazdy
+      operationId: AllPojazdy
+      responses:
+        "200":
+          $ref: '#/responses/pojazdResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Pojazdy
+    post:
+      description: Tworzy nowy pojazd
+      operationId: CreatePojazd
+      parameters:
+      - description: Nowy pojazd
+        in: body
+        name: Body
+        schema:
+          properties:
+            vin:
+              type: string
+              x-go-name: Vin
+            pojemnosc_silnika:
+              format: int32
+              type: integer
+              x-go-name: pojemnosc_silnika
+            marka_id:
+              format: int32
+              type: integer
+              x-go-name: MarkaID
+            numer_rejestracyjny:
+              type: string
+              x-go-name: NumerRejestracyjny
+            model:
+              type: string
+              x-go-name: Model
+          required:
+          - vin
+          - pojemnosc_silnika
+          - marka_id
+          - numer_rejestracyjny
+          - model
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/pojazdResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Pojazdy
+  /pojazdy/{id}:
+    get:
+      description: Zwraca pojedynczy pojazd
+      operationId: GetPojazdByID
+      parameters:
+      - description: Id pojazdu
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/pojazdResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Pojazdy
+
+  /pojazdy_ciezarowe/:
+    get:
+      description: Zwraca wszystkie pojazdy ciezarowe
+      operationId: AllPojazdyCiezarowe
+      responses:
+        "200":
+          $ref: '#/responses/pojazdCiezarowyResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - PojazdyCiezarowe
+    post:
+      description: Tworzy nowy pojazd ciezarowy
+      operationId: CreatePojazdCiezarowy
+      parameters:
+      - description: Nowy pojazd Ciezarowy
+        in: body
+        name: Body
+        schema:
+          properties:
+            vin:
+              type: string
+              x-go-name: Vin
+            pojemnosc_silnika:
+              format: int32
+              type: integer
+              x-go-name: pojemnosc_silnika
+            marka_id:
+              format: int32
+              type: integer
+              x-go-name: MarkaID
+            numer_rejestracyjny:
+              type: string
+              x-go-name: NumerRejestracyjny
+            model:
+              type: string
+              x-go-name: Model
+            ladownosc:
+              format: int32
+              type: integer
+              x-go-name: Ladownosc
+          required:
+          - vin
+          - pojemnosc_silnika
+          - marka_id
+          - numer_rejestracyjny
+          - model
+          - ladownosc
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/pojazdCiezarowyResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - PojazdyCiezarowe
+  /pojazdy_ciezarowe/{id}:
+    get:
+      description: Zwraca pojedynczy pojazd ciezarowy
+      operationId: GetPojazdCiezarowyByID
+      parameters:
+      - description: Id pojazdu ciezarowego
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/pojazdCiezarowyResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - PojazdyCiezarowe
+
+  /pracownicy/:
+    get:
+      description: Zwraca wszystkich pracownikow
+      operationId: AllPracownicy
+      responses:
+        "200":
+          $ref: '#/responses/pracownikResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Pracownicy
+    post:
+      description: Tworzy nowego pracownika
+      operationId: CreatePracownik
+      parameters:
+      - description: Nowy pracownik
+        in: body
+        name: Body
+        schema:
+          properties:
+            haslo:
+              description: Haslo has to be longer than 6 characters
+              type: string
+              x-go-name: Haslo
+            imie:
+              type: string
+              x-go-name: Imie
+            login:
+              type: string
+              uniqueItems: true
+              x-go-name: Login
+            nazwisko:
+              type: string
+              x-go-name: Nazwisko
+            pesel:
+              description: Pesel of the specific administrator. Must be unique and
+                have 11 numbers to be correct.
+              type: string
+              uniqueItems: true
+              x-go-name: Pesel
+          required:
+          - login
+          - haslo
+          - imie
+          - nazwisko
+          - pesel
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/pracownikResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Pracownicy
+  /pracownicy/{id}:
+    get:
+      description: Zwraca pojedynczego pracownika
+      operationId: GetPracownikByID
+      parameters:
+      - description: Id pracownika
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/pracownikResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Pracownicy
+
+  /stanowiska_administracyjne/:
+    get:
+      description: Zwraca wszystkie stanowiska administracyjne
+      operationId: AllStanowiskaAdministracyjne
+      responses:
+        "200":
+          $ref: '#/responses/stanowiskoAdministracyjneResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - StanowiskaAdministracyjne
+    post:
+      description: Tworzy nowe stanowisko administracyjne
+      operationId: CreateStanowiskaAdministracyjne
+      parameters:
+      - description: Nowe stanowiska administracyjne
+        in: body
+        name: Body
+        schema:
+          properties:
+            typ:
+              type: string
+              x-go-name: Typ
+          required:
+          - typ
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/stanowiskoAdministracyjneResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - StanowiskaAdministracyjne
+  /stanowiska_administracyjne/{id}:
+    get:
+      description: Zwraca pojedyncze stanowisko administracyjne
+      operationId: GetStanowiskoAdministracyjneByID
+      parameters:
+      - description: Id stanowiska administracyjnego
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/stanowiskoAdministracyjneResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - StanowiskaAdministracyjne
+
+  /trasy/:
+    get:
+      description: Zwraca wszystkie trasy
+      operationId: AllTrasy
+      responses:
+        "200":
+          $ref: '#/responses/trasaResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Trasy
+    post:
+      description: Tworzy nowa trase
+      operationId: CreateTrasa
+      parameters:
+      - description: Nowa trasa
+        in: body
+        name: Body
+        schema:
+          properties:
+            miejscowosc_poczatkowa:
+              type: string
+              x-go-name: MiejscowoscPoczatkowa
+            miejscowosc_koncowa:
+              type: string
+              x-go-name: MiejscowoscKoncowa
+          required:
+          - typ
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/trasaResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Trasy
+  /trasy/{id}:
+    get:
+      description: Zwraca pojedyncza trase
+      operationId: GetTrasaByID
+      parameters:
+      - description: Id trasy
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/trasaResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Trasy
 
   /auth/{level}:
     post:
@@ -657,6 +1184,76 @@ responses:
     schema:
       items:
         $ref: '#/definitions/Kierowca'
+      type: array
+  kursResponseSingle:
+    description: "An object about an single kurs"
+    schema:
+      $ref: '#/definitions/Kurs'
+  kursResponseMultiple:
+    description: A list of all kursy
+    schema:
+      items:
+        $ref: '#/definitions/Kurs'
+      type: array
+  markaResponseSingle:
+    description: Pojedyncza marka
+    schema:
+      $ref: '#/definitions/Marka'
+  markaResponseMultiple:
+    description: Wszystkie marki
+    schema:
+      items:
+        $ref: '#/definitions/Marka'
+      type: array
+  pojazdResponseSingle:
+    description: Pojedyncza pojazdy
+    schema:
+      $ref: '#/definitions/Pojazd'
+  pojazdResponseMultiple:
+    description: Wszystkie pojazdy
+    schema:
+      items:
+        $ref: '#/definitions/Pojazd'
+      type: array
+  pojazdCiezarowyResponseSingle:
+    description: Pojedyncza pojazdy ciezarowe
+    schema:
+      $ref: '#/definitions/PojazdCiezarowy'
+  pojazdCiezarowyResponseMultiple:
+    description: Wszystkie pojazdy ciezarowe
+    schema:
+      items:
+        $ref: '#/definitions/PojazdCiezarowy'
+      type: array
+  pracownikResponseSingle:
+    description: Pojedynczy pracownik
+    schema:
+      $ref: '#/definitions/Pracownik'
+  pracownikResponseMultiple:
+    description: Wszyscy pracownicy
+    schema:
+      items:
+        $ref: '#/definitions/Pracownik'
+      type: array
+  stanowiskoAdministracyjneResponseSingle:
+    description: Pojedyncze stanowisko administracyjne
+    schema:
+      $ref: '#/definitions/StanowiskoAdministracyjne'
+  stanowiskoAdministracyjneResponseMultiple:
+    description: Wszystkie stanowiska administracyjne
+    schema:
+      items:
+        $ref: '#/definitions/StanowiskoAdministracyjne'
+      type: array
+  trasaResponseSingle:
+    description: Pojedyncza trasa
+    schema:
+      $ref: '#/definitions/Trasa'
+  trasaResponseMultiple:
+    description: Wszystkie trasy
+    schema:
+      items:
+        $ref: '#/definitions/Trasa'
       type: array
   error:
     description: Registered error

@@ -79,7 +79,7 @@ func main() {
 		pracownicy.NewPracownicy(l, db, "/pracownicy"),
 		kierowcy.NewKierowcy(l, db, "/kierowcy"),
 		administratorzy.NewAdministratorzy(l, db, "/administracja"),
-		stanowisko_administracyjne.NewStanowiskoAdministracyjne(l, db, "/stanowisko_administracyjne"),
+		stanowisko_administracyjne.NewStanowiskoAdministracyjne(l, db, "/stanowiska_administracyjne"),
 		kategoria_prawa_jazdy.NewKategoriaPrawaJazdy(l, db, "/kategoria_prawa_jazdy"),
 		trasy.NewTrasy(l, db, "/trasy"),
 		pojazdy.NewPojazdy(l, db, "/pojazdy"),
