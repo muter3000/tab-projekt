@@ -72,6 +72,36 @@ definitions:
     - login
     type: object
     x-go-package: github.com/tab-projekt-backend/schemas
+  Kierowca:
+    properties:
+      haslo:
+        type: string
+        x-go-name: Haslo
+      id:
+        format: int32
+        type: integer
+        uniqueItems: true
+        x-go-name: Id
+      imie:
+        type: string
+        x-go-name: Imie
+      login:
+        type: string
+        uniqueItems: true
+        x-go-name: Login
+      nazwisko:
+        type: string
+        x-go-name: Nazwisko
+      pesel:
+        type: string
+        x-go-name: Pesel
+    required:
+    - id
+    - imie
+    - nazwisko
+    - login
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
   StanowiskoAdministracyjne:
     properties:
       id:
@@ -83,6 +113,184 @@ definitions:
         x-go-name: Typ
     type: object
     x-go-package: github.com/tab-projekt-backend/schemas
+  KategoriaPrawaJazdy:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      kategoria:
+        type: string
+        x-go-name: Kategoria
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  KategoriaKierowcy:
+    properties:
+      kierowca_id:
+        format: int32
+        type: integer
+        x-go-name: KierowcaId
+      kategoria_prawa_jazdy:
+        type: integer
+        x-go-name: KategoriaPrawaJazdyId
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  Blad:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      tytul:
+        type: string
+        x-go-name: Tytul
+      opis:
+        type: string
+        x-go-name: Opis
+      kategoria:
+        type: string
+        x-go-name: Kategoria
+      data_utworzenia:
+        type: string
+        format: "date-time"
+        x-go-name: DataUtworzenia
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  Pojazd:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      numer_silnika:
+        format: int32
+        type: integer
+        x-go-name: NumerSilnika
+      pojemnosc_silnika:
+        format: int32
+        type: integer
+        x-go-name: pojemnosc_silnika
+      marka_id:
+        format: int32
+        type: integer
+        x-go-name: MarkaID
+      numer_rejestracyjny:
+        type: string
+        x-go-name: NumerRejestracyjny
+      model:
+        type: string
+        x-go-name: Model
+      Marka:
+        $ref: '#/definitions/Marka'
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  PojazdCiezarowy:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      numer_silnika:
+        format: int32
+        type: integer
+        x-go-name: NumerSilnika
+      pojemnosc_silnika:
+        format: int32
+        type: integer
+        x-go-name: pojemnosc_silnika
+      marka_id:
+        format: int32
+        type: integer
+        x-go-name: MarkaID
+      numer_rejestracyjny:
+        type: string
+        x-go-name: NumerRejestracyjny
+      model:
+        type: string
+        x-go-name: Model
+      marka:
+        $ref: '#/definitions/Marka'
+      ladownosc:
+        format: int32
+        type: integer
+        x-go-name: Ladownosc
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  Marka:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      nazwa:
+        type: string
+        x-go-name: Nazwa
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  Trasa:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      miejscowosc_poczatkowa:
+        type: string
+        x-go-name: MiejscowoscPoczatkowa
+      miejscowosc_koncowa:
+        type: string
+        x-go-name: MiejscowoscKoncowa
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
+  Kurs:
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      data_rozpoczecia:
+        type: string
+        format: "date-time"
+        x-go-name: DataRozpoczecia
+      data_zakonczenia:
+        type: string
+        format: "date-time"
+        x-go-name: DataZakonczenia
+      czas_rozpoczecia:
+        type: string
+        format: "date-time"
+        x-go-name: CzasRozpoczecia
+      czas_zakonczenia:
+        type: string
+        format: "date-time"
+        x-go-name: CzasZakonczenia
+      czas_przejazdu:
+        format: int32
+        type: integer
+        x-go-name: CzasPrzejazdu
+      ladunek:
+        format: float
+        type: float
+        x-go-name: Ladunek
+      trasa_id:
+        format: int32
+        type: integer
+        x-go-name: TrasaID
+      Trasa:
+        $ref: '#/definitions/Trasa'
+      kierowca_id:
+        format: int32
+        type: integer
+        x-go-name: KierowcaID
+      Kierowca:
+        $ref: '#/definitions/Kierowca'
+      pojazd_id:
+        format: int32
+        type: integer
+        x-go-name: PojazdID
+      Pojazd:
+        $ref: '#/definitions/Pojazd'
+    type: object
+    x-go-package: github.com/tab-projekt-backend/schemas
 info:
   description: Documentation of Workers API
   title: Workers API
@@ -91,10 +299,10 @@ paths:
   /administratorzy/:
     get:
       description: Returns list of administrators
-      operationId: ListAdministrators
+      operationId: AllAdministrators
       responses:
         "200":
-          $ref: '#/responses/administratorsResponse'
+          $ref: '#/responses/administratorsResponseMultiple'
         "500":
           $ref: '#/responses/error'
       tags:
@@ -144,14 +352,14 @@ paths:
           type: object
       responses:
         "200":
-          $ref: '#/responses/administrator'
+          $ref: '#/responses/administratorResponseSingle'
         "500":
           $ref: '#/responses/error'
       tags:
       - Administrators
   /administratorzy/{id}:
     get:
-      description: Returns list of administrators
+      description: Returns single administrator
       operationId: GetAdministratorByID
       parameters:
       - description: The id of the wanted administrator
@@ -160,16 +368,232 @@ paths:
         name: id
         required: true
         type: integer
-        x-go-name: Id
+        x-go-name: AdministracjaID
       responses:
         "200":
-          $ref: '#/responses/administrator'
+          $ref: '#/responses/administratorResponseSingle'
         "400":
           $ref: '#/responses/error'
         "500":
           $ref: '#/responses/error'
       tags:
       - Administrators
+  /bledy/:
+    get:
+      description: Returns list of errors
+      operationId: AllErrors
+      responses:
+        "200":
+          $ref: '#/responses/bladResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Errors
+    post:
+      description: Creates a new error
+      operationId: CreateError
+      parameters:
+      - description: New error
+        in: body
+        name: Body
+        schema:
+          properties:
+            tytul:
+              description: Title of the error
+              type: string
+              x-go-name: Tytul
+            opis:
+              description: Description of the error
+              type: string
+              x-go-name: Opis
+            kategoria:
+              description: Category of the error
+              type: string
+              x-go-name: Kategoria
+          required:
+          - tytul
+          - opis
+          - kategoria
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/bladResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Errors
+  /bledy/{id}:
+    get:
+      description: Returns single error
+      operationId: GetErrorByID
+      parameters:
+      - description: The id of the wanted error
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/bladResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Errors
+  /kategoria_prawa_jazdy/:
+    get:
+      description: Returns list of driver license categories
+      operationId: AllDriverLicensesCategories
+      responses:
+        "200":
+          $ref: '#/responses/kategoriaPrawaJazdyResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - DriverLicenseCategories
+    post:
+      description: Creates a new driver license category
+      operationId: CreateDriverLicenseCategory
+      parameters:
+      - description: New driver license category
+        in: body
+        name: Body
+        schema:
+          properties:
+            kategoria:
+              type: string
+              x-go-name: Kategoria
+          required:
+          - kategoria
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/kategoriaPrawaJazdyResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - DriverLicenseCategories
+  /kategoria_prawa_jazdy/{id}:
+    get:
+      description: Returns single driver license category
+      operationId: GetDriverLicenseByID
+      parameters:
+      - description: The id of the wanted driver license category
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/kategoriaPrawaJazdyResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - DriverLicenseCategories
+
+  /kierowcy/:
+    get:
+      description: Returns list of drivers
+      operationId: AllDrivers
+      responses:
+        "200":
+          $ref: '#/responses/kierowcaResponseMultiple'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Drivers
+    post:
+      description: Creates a new driver
+      operationId: CreateDriver
+      parameters:
+      - description: New driver
+        in: body
+        name: Body
+        schema:
+          properties:
+            haslo:
+              description: Haslo has to be longer than 6 characters
+              type: string
+              x-go-name: Haslo
+            imie:
+              type: string
+              x-go-name: Imie
+            login:
+              type: string
+              uniqueItems: true
+              x-go-name: Login
+            nazwisko:
+              type: string
+              x-go-name: Nazwisko
+            pesel:
+              description: Pesel of the specific driver. Must be unique and
+                have 11 numbers to be correct.
+              type: string
+              uniqueItems: true
+              x-go-name: Pesel
+          required:
+          - haslo
+          - imie
+          - login
+          - nazwisko
+          - pesel
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/kierowcaResponseSingle'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Drivers
+  /kierowcy/{id}:
+    get:
+      description: Returns single driver
+      operationId: GetDriverByID
+      parameters:
+      - description: The id of the wanted driver
+        format: int32
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/kierowcaResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Drivers
+  /kierowcy/pesel/{pesel}:
+    get:
+      description: Returns single driver
+      operationId: GetDriverByID
+      parameters:
+      - description: The pesel of the wanted driver
+        in: path
+        name: pesel
+        required: true
+        type: string
+        x-go-name: Pesel
+      responses:
+        "200":
+          $ref: '#/responses/kierowcaResponseSingle'
+        "400":
+          $ref: '#/responses/error'
+        "500":
+          $ref: '#/responses/error'
+      tags:
+      - Drivers
+
   /auth/{level}:
     post:
       description: Returns list of administratorzy
@@ -194,15 +618,45 @@ paths:
 produces:
 - application/json
 responses:
-  administrator:
-    description: ""
+  administratorResponseSingle:
+    description: "An object about an single administrator"
     schema:
       $ref: '#/definitions/Administrator'
-  administratorsResponse:
+  administratorsResponseMultiple:
     description: A list of all registered administrators
     schema:
       items:
         $ref: '#/definitions/Administrator'
+      type: array
+  bladResponseMultiple:
+    description: A list of all errors
+    schema:
+      items:
+        $ref: '#/definitions/Blad'
+      type: array
+  bladResponseSingle:
+    description: "An object about an single error"
+    schema:
+      $ref: '#/definitions/Blad'
+  kategoriaPrawaJazdyResponseSingle:
+    description: "An object about an single driver license category"
+    schema:
+      $ref: '#/definitions/KategoriaPrawaJazdy'
+  kategoriaPrawaJazdyResponseMultiple:
+    description: A list of all driver license categories
+    schema:
+      items:
+        $ref: '#/definitions/KategoriaPrawaJazdy'
+      type: array
+  kierowcaResponseSingle:
+    description: "An object about an single driver"
+    schema:
+      $ref: '#/definitions/Kierowca'
+  kierowcaResponseMultiple:
+    description: A list of all drivers
+    schema:
+      items:
+        $ref: '#/definitions/Kierowca'
       type: array
   error:
     description: Registered error
