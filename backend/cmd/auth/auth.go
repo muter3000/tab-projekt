@@ -3,18 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
-	gohandlers "github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	"github.com/hashicorp/go-hclog"
-	"github.com/tab-projekt-backend/database/psql"
-	"github.com/tab-projekt-backend/database/redis"
-	"github.com/tab-projekt-backend/handlers/auth"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"time"
+
+	"github.com/go-pg/pg/v10/orm"
+	gohandlers "github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/hashicorp/go-hclog"
+	"github.com/tab-projekt-backend/database/psql"
+	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/handlers/auth"
+	"github.com/tab-projekt-backend/schemas"
 )
 
 func main() {
@@ -34,6 +37,8 @@ func main() {
 	if err != nil {
 		l.Error("connecting to redis", "err", err)
 	}
+
+	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
 
 	authHandler := auth.NewAuthHandler(l, rc, "/auth")
 
