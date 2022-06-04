@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-pg/pg/v10/orm"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
@@ -17,7 +18,6 @@ import (
 	"github.com/tab-projekt-backend/database/redis"
 	"github.com/tab-projekt-backend/handlers/auth"
 	"github.com/tab-projekt-backend/schemas"
-	"github.com/go-pg/pg/v10/orm"
 )
 
 func main() {
@@ -40,7 +40,7 @@ func main() {
 
 	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
 
-	authHandler := auth.NewAuthHandler(rc)
+	authHandler := auth.NewAuthHandler(l, rc, "/auth")
 
 	sm := mux.NewRouter()
 	authHandler.RegisterSubRouter(sm)

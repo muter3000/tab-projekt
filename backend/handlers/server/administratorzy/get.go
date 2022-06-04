@@ -24,6 +24,7 @@ func (a *Administratorzy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	err = json.NewEncoder(rw).Encode(administracja)
 	if err != nil {
 		a.l.Error("err", "", err)
+		http.Error(rw, "Error encoding administracja table to JSON", http.StatusInternalServerError)
 		return
 	}
 }
@@ -45,7 +46,7 @@ func (a *Administratorzy) getByID(rw http.ResponseWriter, r *http.Request) {
 	err = a.db.Model(&administrator).Where("administracja_id = ?", id).Relation("StanowiskoAdministracyjne").Select()
 	if err != nil {
 		a.l.Error("while handling get by ID", "path", a.path, "error", err)
-		http.Error(rw, "Error getting administracja table", http.StatusInternalServerError)
+		http.Error(rw, "Error getting administracja table", http.StatusBadRequest)
 		return
 	}
 

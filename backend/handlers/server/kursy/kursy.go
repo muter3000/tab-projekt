@@ -27,4 +27,7 @@ func (k *Kursy) RegisterSubRouter(router *mux.Router) {
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", k.createNew)
+
+	patch := r.Methods(http.MethodPatch).Subrouter()
+	patch.HandleFunc("/{id:[0-9]+}", k.updateExisting)
 }

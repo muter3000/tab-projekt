@@ -12,6 +12,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /go/bin/db ./cmd/create-da
 
 FROM scratch
 # Copy our static executable.
-COPY --from=builder /go/bin/db /go/bin/db
+COPY --from=builder /go/bin/db /db
 # Run the hello binary.
-ENTRYPOINT ["/go/bin/db"]
+ENTRYPOINT ["/db"]
