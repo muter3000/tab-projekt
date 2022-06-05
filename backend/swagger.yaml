@@ -295,7 +295,7 @@ info:
   version: 1.0.0
 paths:
 
-  /administratorzy/:
+  /administracja/:
     get:
       description: Zwraca wszystkich pracownikow administracji
       operationId: AllAdministratorzy
@@ -356,7 +356,7 @@ paths:
           $ref: '#/responses/error'
       tags:
       - Administratorzy
-  /administratorzy/{id}:
+  /administracja/{id}:
     get:
       description: Zwraca pojedynczego pracownika administracji
       operationId: GetAdministratorByID
