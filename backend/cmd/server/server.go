@@ -29,9 +29,9 @@ import (
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
-	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
+	"github.com/rs/cors"
 )
 
 // type dbLogger struct{}
@@ -92,15 +92,15 @@ func main() {
 	for _, sr := range subRouters {
 		sr.RegisterSubRouter(sm)
 	}
-	// CORS
-	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
+
+	handler := cors.AllowAll().Handler(sm)
 
 	bindAddress := fmt.Sprintf(":%s", os.Getenv("PORT"))
 
 	// create a new server
 	s := http.Server{
 		Addr:         bindAddress,                                      // configure the bind address
-		Handler:      ch(sm),                                           // set the default handler
+		Handler:      handler,                                          // set the default handler
 		ErrorLog:     l.StandardLogger(&hclog.StandardLoggerOptions{}), // set the logger for the server
 		ReadTimeout:  500 * time.Millisecond,                           // max time to read request from the client
 		WriteTimeout: 1000 * time.Millisecond,                          // max time to write response to the client
