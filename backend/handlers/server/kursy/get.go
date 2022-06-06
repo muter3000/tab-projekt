@@ -65,9 +65,9 @@ func (k *Kursy) getAll(rw http.ResponseWriter, r *http.Request) {
 			q = q.WhereOr("data_zakonczenia <= ?", dataZakonczeniaMax).WhereOr("TRUE = ?", dataZakonczeniaMax.IsZero())
 			return q, nil
 		}).
-		Where("kierowca.imie LIKE ?", "%"+imie_pracownika+"%").
-		Where("kierowca.nazwisko LIKE ?", "%"+nazwisko_pracownika+"%").
-		Where("pojazd__marka.nazwa LIKE ?", "%"+marka+"%").
+		Where("kierowca.imie iLIKE ?", "%"+imie_pracownika+"%").
+		Where("kierowca.nazwisko iLIKE ?", "%"+nazwisko_pracownika+"%").
+		Where("pojazd__marka.nazwa iLIKE ?", "%"+marka+"%").
 		Select()
 	if err != nil {
 		k.l.Error("while handling get all", "path", k.path, "error", err)
@@ -178,9 +178,9 @@ func (k *Kursy) getByDriverID(rw http.ResponseWriter, r *http.Request) {
 			q = q.WhereOr("data_zakonczenia <= ?", dataZakonczeniaMax).WhereOr("TRUE = ?", dataZakonczeniaMax.IsZero())
 			return q, nil
 		}).
-		Where("kierowca.imie LIKE ?", "%"+imie_pracownika+"%").
-		Where("kierowca.nazwisko LIKE ?", "%"+nazwisko_pracownika+"%").
-		Where("pojazd__marka.nazwa LIKE ?", "%"+marka+"%").Select()
+		Where("kierowca.imie iLIKE ?", "%"+imie_pracownika+"%").
+		Where("kierowca.nazwisko iLIKE ?", "%"+nazwisko_pracownika+"%").
+		Where("pojazd__marka.nazwa iLIKE ?", "%"+marka+"%").Select()
 	if err != nil {
 		k.l.Error("while handling get all", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kurs table", http.StatusInternalServerError)
