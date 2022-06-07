@@ -73,7 +73,7 @@ services:
     ports:
       - "5000:5000"
   auth:
-    image: tabprojektcbbss/auth:1.0.0
+    image: tabprojektcbbss/auth:1.0.1
     build:
       context: ./backend
       dockerfile: ./docker/auth/Dockerfile
@@ -102,8 +102,6 @@ services:
     command: redis-server --save 60 1 --loglevel warning
     volumes:
       - cache:/data
-  nginx:
-    image: nginx:alpine
 volumes:
   cache:
     driver: local

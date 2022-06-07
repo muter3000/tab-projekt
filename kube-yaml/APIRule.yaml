@@ -11,20 +11,6 @@ spec:
   rules:
     - http:
         paths:
-          - path: /pgadmin*
-            pathType: Prefix
-            backend:
-              service:
-                name: pgadmin
-                port:
-                  number: 80
-          - path: /browser*
-            pathType: Prefix
-            backend:
-              service:
-                name: pgadmin
-                port:
-                  number: 80
           - path: /auth
             pathType: Prefix
             backend:
@@ -32,7 +18,7 @@ spec:
                 name: auth
                 port:
                   number: 6000
-          - path: /(.*)
+          - path: /*
             pathType: Prefix
             backend:
               service:

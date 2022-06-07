@@ -27,7 +27,7 @@ spec:
       containers:
         - env:
             - name: PGADMIN_CONFIG_SERVER_MODE
-              value: "False"
+              value: "True"
             - name: PGADMIN_DEFAULT_EMAIL
               value: pgadmin4@pgadmin.org
             - name: PGADMIN_DEFAULT_PASSWORD
@@ -36,6 +36,6 @@ spec:
           name: pgadmin-container
           ports:
             - containerPort: 80
-          resources: {}
+          resources: { }
       restartPolicy: Always
-status: {}
+status: { }

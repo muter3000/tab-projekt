@@ -35,7 +35,7 @@ func main() {
 		l.Error("connecting to redis", "err", err)
 	}
 
-	authHandler := auth.NewAuthHandler(l, rc, "/auth")
+	authHandler := auth.NewAuthHandler(l, rc, "/")
 
 	sm := mux.NewRouter()
 	authHandler.RegisterSubRouter(sm)
