@@ -10,6 +10,7 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/go-hclog v1.2.0
+	github.com/rs/cors v1.8.2
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 )
 
