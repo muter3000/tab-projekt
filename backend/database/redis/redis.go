@@ -18,8 +18,9 @@ import (
 type PermissionLevel int8
 
 const (
-	Kierowca PermissionLevel = iota
-	Administator
+	None PermissionLevel = iota
+	Kierowca
+	Administrator
 	AdministratorDB
 )
 
@@ -66,7 +67,7 @@ func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login st
 			a.l.Debug("bcrypt.Compare", "hash", kierowca.Haslo, "pass", password, "err", err)
 			return false
 		}
-	case Administator:
+	case Administrator:
 		var administrator schemas.Administrator
 		err := a.pg.Model(&administrator).Where("login = ?", login).Select()
 		if err != nil {

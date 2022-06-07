@@ -20,10 +20,10 @@ func NewAuthHandler(l hclog.Logger, ac *redis.AuthorizationClient, path string) 
 func (a *AuthHandler) RegisterSubRouter(router *mux.Router) {
 	r := router.PathPrefix(a.path).Subrouter()
 	get := r.Methods(http.MethodGet).Subrouter()
-	get.HandleFunc("/{level:[0-2]{1}}", a.CheckAuthorization)
+	get.HandleFunc("/{level:[1-3]{1}}", a.CheckAuthorization)
 
 	post := r.Methods(http.MethodPost).Subrouter()
-	post.HandleFunc("/{level:[0-2]{1}}", a.CreateSession)
+	post.HandleFunc("/{level:[1-3]{1}}", a.CreateSession)
 
 	del := r.Methods(http.MethodDelete).Subrouter()
 	del.HandleFunc("/", a.InvalidateSession)

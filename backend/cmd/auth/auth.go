@@ -38,6 +38,7 @@ func main() {
 		l.Error("connecting to redis", "err", err)
 	}
 
+
 	orm.RegisterTable((*schemas.KategoriaKierowcy)(nil))
 
 	authHandler := auth.NewAuthHandler(l, rc, "/auth")
