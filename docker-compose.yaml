@@ -2,6 +2,7 @@ version: '3.5'
 
 services:
   create_database:
+    image: tabprojektcbbss/create_database:1.0.1
     build:
       context: ./backend
       dockerfile: ./docker/create-database/Dockerfile
@@ -19,7 +20,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin2137}
-      PGUSER: admin,
+      PGUSER: admin
       PGDATA: /data/postgres
       POSTGRES_HOST_AUTH_METHOD: password
     volumes:
@@ -73,7 +74,7 @@ services:
     ports:
       - "5000:5000"
   auth:
-    image: tabprojektcbbss/auth:1.0.1
+    image: tabprojektcbbss/auth:1.0.3
     build:
       context: ./backend
       dockerfile: ./docker/auth/Dockerfile

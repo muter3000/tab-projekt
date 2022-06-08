@@ -45,7 +45,7 @@ spec:
               value: redis
             - name: REDIS_PORT
               value: "6379"
-          image: tabprojektcbbss/auth:1.0.1
+          image: tabprojektcbbss/auth:1.0.3
           name: auth
           ports:
             - containerPort: 6000
