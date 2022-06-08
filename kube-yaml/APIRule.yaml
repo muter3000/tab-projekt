@@ -23,6 +23,13 @@ spec:
                 name: pgadmin
                 port:
                   number: 80
+          - path: /swagger.yaml
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 5000
+            pathType: Exact
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
