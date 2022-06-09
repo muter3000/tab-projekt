@@ -27,11 +27,13 @@ spec:
       containers:
         - env:
             - name: PGADMIN_CONFIG_SERVER_MODE
-              value: "False"
+              value: "True"
             - name: PGADMIN_DEFAULT_EMAIL
               value: pgadmin4@pgadmin.org
             - name: PGADMIN_DEFAULT_PASSWORD
-              value: admin
+              value: admin2137
+            - name: PGADMIN_CONFIG_X_FRAME_OPTIONS
+              value: "''"
           image: dpage/pgadmin4
           name: pgadmin-container
           ports:

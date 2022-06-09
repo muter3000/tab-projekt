@@ -30,6 +30,13 @@ spec:
                 port:
                   number: 5000
             pathType: Exact
+          - path: /browser(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
