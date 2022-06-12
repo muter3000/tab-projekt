@@ -24,8 +24,15 @@ spec:
       labels:
         io.kompose.service: pgadmin
     spec:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 0
       containers:
         - env:
+            - name: PGADMIN_CONFIG_IS_WIN
+              value: "False"
+            - name: PGADMIN_CONFIG_FILE_LOG_LEVEL
+              value: "50"
             - name: PGADMIN_CONFIG_SERVER_MODE
               value: "True"
             - name: PGADMIN_DEFAULT_EMAIL
@@ -34,10 +41,31 @@ spec:
               value: admin2137
             - name: PGADMIN_CONFIG_X_FRAME_OPTIONS
               value: "''"
-          image: dpage/pgadmin4
+            - name: PGADMIN_CONFIG_SESSION_COOKIE_SAMESITE
+              value: "'None'"
+            - name: PGADMIN_CONFIG_SESSION_COOKIE_SECURE
+              value: "True"
+            - name: PGADMIN_CONFIG_SESSION_COOKIE_HTTPONLY
+              value: "False"
+            - name: PGADMIN_CONFIG_LOG_FILE
+              value: "'/var/log/pgadmin4/pgadmin4.log'"
+            - name: PGADMIN_CONFIG_SQLITE_PATH
+              value: "'/var/lib/pgadmin4/pgadmin4.db'"
+            - name: PGADMIN_CONFIG_SESSION_DB_PATH
+              value: "'/var/lib/pgadmin4/sessions'"
+            - name: PGADMIN_CONFIG_STORAGE_DIR
+              value: "'/var/lib/pgadmin4/storage'"
+          image: dpage/pgadmin4:6.10
           name: pgadmin-container
+          volumeMounts:
+            - mountPath: /var/lib/pgadmin4
+              name: pgadmin
           ports:
             - containerPort: 80
           resources: { }
       restartPolicy: Always
+      volumes:
+        - name: pgadmin
+          persistentVolumeClaim:
+            claimName: pgadmin-claim0
 status: { }
