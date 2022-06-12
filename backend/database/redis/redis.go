@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-redis/redis/v8"
@@ -11,11 +12,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 )
 
 type PermissionLevel int8
+
+type session struct {
+	Level  uint8 `json:"level"`
+	UserId int32 `json:"user_id"`
+}
 
 const (
 	None PermissionLevel = iota
@@ -23,6 +28,7 @@ const (
 	Administrator
 	AdministratorDB
 )
+const expirationTime = 300 * time.Second
 
 type AuthorizationClient struct {
 	l  hclog.Logger
@@ -55,6 +61,7 @@ func NewAuthorizationClient(l hclog.Logger, pg *pg.DB) (*AuthorizationClient, er
 
 func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login string, password string, level PermissionLevel) bool {
 	a.l.Debug("Handling session creation with", "login", login, "level", level)
+	userId := int32(0)
 	switch level {
 	case Kierowca:
 		kierowca := schemas.Kierowca{}
@@ -67,6 +74,7 @@ func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login st
 			a.l.Debug("bcrypt.Compare", "hash", kierowca.Haslo, "pass", password, "err", err)
 			return false
 		}
+		userId = kierowca.KierowcaID
 	case Administrator:
 		var administrator schemas.Administrator
 		err := a.pg.Model(&administrator).Where("login = ?", login).Select()
@@ -78,6 +86,7 @@ func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login st
 			a.l.Debug("bcrypt.Compare", "hash", administrator.Haslo, "pass", password, "err", err)
 			return false
 		}
+		userId = administrator.AdministracjaID
 	case AdministratorDB:
 		if login != "adminDB" || password != os.Getenv("DB_ADMIN_PASS") {
 			return false
@@ -87,12 +96,23 @@ func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login st
 	sId := uuid.New().String()
 	cookie := &http.Cookie{
 		Name:   "session-id",
+		Path:   "/",
 		Value:  sId,
 		MaxAge: 300,
 	}
 	http.SetCookie(rw, cookie)
 
-	err := a.rc.Set(context.Background(), sId, strconv.Itoa(int(level)), 300*time.Second).Err()
+	s := session{
+		Level:  uint8(level),
+		UserId: userId,
+	}
+
+	jsonSession, err := json.Marshal(&s)
+	if err != nil {
+		return false
+	}
+
+	err = a.rc.Set(context.Background(), sId, string(jsonSession), expirationTime).Err()
 	if err != nil {
 		return false
 	}
@@ -122,7 +142,7 @@ func (a *AuthorizationClient) InvalidateUserSession(r *http.Request) bool {
 	return true
 }
 
-func (a *AuthorizationClient) CheckAuthorization(r *http.Request, level PermissionLevel) bool {
+func (a *AuthorizationClient) CheckAuthorization(r *http.Request, level PermissionLevel) (bool, int32) {
 	cookies := r.Cookies()
 
 	sId := ""
@@ -134,22 +154,29 @@ func (a *AuthorizationClient) CheckAuthorization(r *http.Request, level Permissi
 	}
 	if sId == "" {
 		a.l.Debug("user didn't send session cookie")
-		return false
+		return false, -1
 	}
 	value, err := a.rc.Get(context.Background(), sId).Result()
 	if err != nil {
 		a.l.Warn("getting session from redis", "err", err)
-		return false
+		return false, -1
 	}
-	val, err := strconv.Atoi(value)
+	err = a.rc.Set(context.Background(), sId, value, expirationTime).Err()
 	if err != nil {
-		a.l.Error("converting val to int", "val", val)
-		return false
+		a.l.Error("Restoring session")
+		return false, -1
 	}
-	if PermissionLevel(val) != level {
-		a.l.Debug("Got session with wrong permission level", "uuid", sId, "permissionLevel", val, "requiredLevel", int8(level))
-		return false
+	s := session{}
+	err = json.Unmarshal([]byte(value), &s)
+	if err != nil {
+		return false, -1
 	}
-	a.l.Debug("Got session", "uuid", sId, "permissionLevel", val)
-	return true
+
+	if PermissionLevel(s.Level) < level {
+		a.l.Debug("Got session with wrong permission level", "uuid", sId, "permissionLevel", s.Level, "requiredLevel", int8(level))
+		return false, -1
+	}
+
+	a.l.Debug("Got session", "session-id", sId, "permissionLevel", level)
+	return true, s.UserId
 }

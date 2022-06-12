@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/tab-projekt-backend/database/redis"
 	"net/http"
@@ -15,10 +16,16 @@ func (a *AuthHandler) CheckAuthorization(rw http.ResponseWriter, r *http.Request
 		panic(err)
 	}
 
-	auth := a.ac.CheckAuthorization(r, redis.PermissionLevel(level))
+	auth, userId := a.ac.CheckAuthorization(r, redis.PermissionLevel(level))
 	if auth == false {
 		http.Error(rw, "Error: not authorized", http.StatusUnauthorized)
 		return
 	}
-	rw.WriteHeader(http.StatusOK)
+	e := json.NewEncoder(rw)
+	err = e.Encode(userId)
+
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }

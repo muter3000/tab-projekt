@@ -1,6 +1,8 @@
 package marki
 
 import (
+	"github.com/tab-projekt-backend/auth_middleware"
+	"github.com/tab-projekt-backend/database/redis"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -19,6 +21,8 @@ func NewMarki(l hclog.Logger, db *pg.DB, path string) *Marki {
 }
 
 func (m *Marki) RegisterSubRouter(router *mux.Router) {
+	adminMiddleware := auth_middleware.NewAuthorisationMiddleware(m.l, auth_middleware.Authorizer{Level: redis.Administrator}).Middleware
+
 	r := router.PathPrefix(m.path).Subrouter()
 	get := r.Methods(http.MethodGet).Subrouter()
 	get.HandleFunc("", m.getAll)
@@ -26,4 +30,5 @@ func (m *Marki) RegisterSubRouter(router *mux.Router) {
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", m.createNew)
+	r.Use(adminMiddleware)
 }

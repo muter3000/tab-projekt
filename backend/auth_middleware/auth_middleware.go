@@ -1,12 +1,11 @@
 package auth_middleware
 
 import (
-	"fmt"
 	_ "github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/helpers"
 	"net/http"
-	"os"
 )
 
 type AuthorizationMiddleware struct {
@@ -55,33 +54,9 @@ type Authorizer struct {
 }
 
 func (k Authorizer) CheckAuthorization(r *http.Request) (bool, error) {
-	authorization := getAuthorization(r, k.Level)
+	_, authorization := helpers.GetAuthAndIDFromSession(r, k.Level)
 	if authorization != nil {
 		return false, authorization
 	}
 	return true, nil
-}
-
-func getAuthorization(r *http.Request, level redis.PermissionLevel) error {
-	authHost := os.Getenv("AUTH_HOST")
-	authPort := os.Getenv("AUTH_PORT")
-
-	url := fmt.Sprintf("%s:%s/auth/%v", authHost, authPort, int8(level))
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-
-	for _, c := range r.Cookies() {
-		req.AddCookie(c)
-	}
-
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("request for %v level unauthorized", level)
-	}
-	return nil
 }
