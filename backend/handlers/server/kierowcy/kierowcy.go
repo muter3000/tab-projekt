@@ -1,8 +1,8 @@
 package kierowcy
 
 import (
-	"github.com/tab-projekt-backend/auth_middleware"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/middlewares"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -25,15 +25,15 @@ func (k *Kierowcy) RegisterSubRouter(router *mux.Router) {
 
 	getKierowca := r.Methods(http.MethodGet).Subrouter()
 	getKierowca.HandleFunc("/me", k.getMe)
-	getKierowca.Use(auth_middleware.NewAuthorisationMiddleware(k.l, auth_middleware.Authorizer{Level: redis.Kierowca}).Middleware)
+	getKierowca.Use(middlewares.NewAuthorisationMiddleware(k.l, middlewares.Authorizer{Level: redis.Kierowca}).Middleware)
 
 	getAdmin := r.Methods(http.MethodGet).Subrouter()
 	getAdmin.HandleFunc("/pesel/{pesel:[0-9]{11}}", k.getByPesel)
 	getAdmin.HandleFunc("/{id:[0-9]+}", k.getByID)
 	getAdmin.HandleFunc("", k.getAll)
-	getAdmin.Use(auth_middleware.NewAuthorisationMiddleware(k.l, auth_middleware.Authorizer{Level: redis.Administrator}).Middleware)
+	getAdmin.Use(middlewares.NewAuthorisationMiddleware(k.l, middlewares.Authorizer{Level: redis.Administrator}).Middleware)
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", k.createNew)
-	post.Use(auth_middleware.NewAuthorisationMiddleware(k.l, auth_middleware.Authorizer{Level: redis.Administrator}).Middleware)
+	post.Use(middlewares.NewAuthorisationMiddleware(k.l, middlewares.Authorizer{Level: redis.Administrator}).Middleware)
 }

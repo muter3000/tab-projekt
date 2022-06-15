@@ -1,8 +1,8 @@
 package kursy
 
 import (
-	"github.com/tab-projekt-backend/auth_middleware"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/middlewares"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -21,8 +21,8 @@ func NewKursy(l hclog.Logger, db *pg.DB, path string) *Kursy {
 }
 
 func (k *Kursy) RegisterSubRouter(router *mux.Router) {
-	adminMiddleware := auth_middleware.NewAuthorisationMiddleware(k.l, auth_middleware.Authorizer{Level: redis.Kierowca}).Middleware
-	kierowcaMiddleware := auth_middleware.NewAuthorisationMiddleware(k.l, auth_middleware.Authorizer{Level: redis.Kierowca}).Middleware
+	adminMiddleware := middlewares.NewAuthorisationMiddleware(k.l, middlewares.Authorizer{Level: redis.Kierowca}).Middleware
+	kierowcaMiddleware := middlewares.NewAuthorisationMiddleware(k.l, middlewares.Authorizer{Level: redis.Kierowca}).Middleware
 
 	r := router.PathPrefix(k.path).Subrouter()
 	getAdmin := r.Methods(http.MethodGet).Subrouter()

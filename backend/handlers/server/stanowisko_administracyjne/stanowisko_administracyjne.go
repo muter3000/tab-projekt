@@ -1,8 +1,8 @@
 package stanowisko_administracyjne
 
 import (
-	"github.com/tab-projekt-backend/auth_middleware"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/middlewares"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -26,10 +26,10 @@ func (sa *Stanowisko_administracyjne) RegisterSubRouter(router *mux.Router) {
 	get.HandleFunc("", sa.getAll)
 	get.HandleFunc("/{id:[0-9]+}", sa.getByID)
 
-	get.Use(auth_middleware.NewAuthorisationMiddleware(sa.l, auth_middleware.Authorizer{Level: redis.Administrator}).Middleware)
+	get.Use(middlewares.NewAuthorisationMiddleware(sa.l, middlewares.Authorizer{Level: redis.Administrator}).Middleware)
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", sa.createNew)
 
-	post.Use(auth_middleware.NewAuthorisationMiddleware(sa.l, auth_middleware.Authorizer{Level: redis.AdministratorDB}).Middleware)
+	post.Use(middlewares.NewAuthorisationMiddleware(sa.l, middlewares.Authorizer{Level: redis.AdministratorDB}).Middleware)
 }

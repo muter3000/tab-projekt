@@ -16,7 +16,7 @@ func (p *Pracownicy) getAll(rw http.ResponseWriter, _ *http.Request) {
 
 	var pracownicy []schemas.Pracownik
 
-	err := p.db.Model(&pracownicy).Select()
+	err := p.db.Model(&pracownicy).Column("id", "pesel", "imie", "nazwisko", "login").Select()
 	if err != nil {
 		p.l.Error("while handling get all", "path", p.path, "error", err)
 		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
@@ -44,7 +44,7 @@ func (p *Pracownicy) getByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	pracownik := schemas.Pracownik{}
-	err = p.db.Model(&pracownik).Where("id = ?", id).Select()
+	err = p.db.Model(&pracownik).Where("id = ?", id).Column("id", "pesel", "imie", "nazwisko", "login").Select()
 	if err != nil {
 		p.l.Error("while handling get by ID", "path", p.path, "error", err)
 		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
@@ -69,7 +69,7 @@ func (p *Pracownicy) getByPesel(rw http.ResponseWriter, r *http.Request) {
 
 	pracownik := schemas.Pracownik{}
 
-	err := p.db.Model(&pracownik).Where("pesel = ?", pesel).Select()
+	err := p.db.Model(&pracownik).Where("pesel = ?", pesel).Column("id", "pesel", "imie", "nazwisko", "login").Select()
 	if err != nil {
 		p.l.Error("while handling get by ID", "path", p.path, "error", err)
 		http.Error(rw, "Error getting pracownicy table", http.StatusInternalServerError)
