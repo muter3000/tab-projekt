@@ -1,4 +1,4 @@
-package auth_middleware
+package middlewares
 
 import (
 	_ "github.com/gorilla/mux"

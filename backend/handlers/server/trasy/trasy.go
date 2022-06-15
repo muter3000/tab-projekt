@@ -1,8 +1,8 @@
 package trasy
 
 import (
-	"github.com/tab-projekt-backend/auth_middleware"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/middlewares"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -29,5 +29,5 @@ func (t *Trasy) RegisterSubRouter(router *mux.Router) {
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", t.createNew)
 
-	r.Use(auth_middleware.NewAuthorisationMiddleware(t.l, auth_middleware.Authorizer{Level: redis.Administrator}).Middleware)
+	r.Use(middlewares.NewAuthorisationMiddleware(t.l, middlewares.Authorizer{Level: redis.Administrator}).Middleware)
 }

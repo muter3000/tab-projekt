@@ -62,9 +62,6 @@ type Options struct {
 	// AllowCredentials indicates whether the request can include user credentials like
 	// cookies, HTTP authentication or client side SSL certificates.
 	AllowCredentials bool
-	// AllowPrivateNetwork indicates whether to accept cross-origin requests over a
-	// private network.
-	AllowPrivateNetwork bool
 	// OptionsPassthrough instructs preflight to let other potential next handlers to
 	// process the OPTIONS method. Turn this on if your application handles OPTIONS.
 	OptionsPassthrough bool
@@ -106,7 +103,6 @@ type Cors struct {
 	// Status code to use for successful OPTIONS requests
 	optionsSuccessStatus int
 	allowCredentials     bool
-	allowPrivateNetwork  bool
 	optionPassthrough    bool
 }
 
@@ -117,7 +113,6 @@ func New(options Options) *Cors {
 		allowOriginFunc:        options.AllowOriginFunc,
 		allowOriginRequestFunc: options.AllowOriginRequestFunc,
 		allowCredentials:       options.AllowCredentials,
-		allowPrivateNetwork:    options.AllowPrivateNetwork,
 		maxAge:                 options.MaxAge,
 		optionPassthrough:      options.OptionsPassthrough,
 	}
@@ -323,9 +318,6 @@ func (c *Cors) handlePreflight(w http.ResponseWriter, r *http.Request) {
 	}
 	if c.allowCredentials {
 		headers.Set("Access-Control-Allow-Credentials", "true")
-	}
-	if c.allowPrivateNetwork && r.Header.Get("Access-Control-Request-Private-Network") == "true" {
-		headers.Set("Access-Control-Allow-Private-Network", "true")
 	}
 	if c.maxAge > 0 {
 		headers.Set("Access-Control-Max-Age", strconv.Itoa(c.maxAge))

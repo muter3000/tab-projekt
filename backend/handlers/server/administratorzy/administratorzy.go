@@ -1,8 +1,8 @@
 package administratorzy
 
 import (
-	"github.com/tab-projekt-backend/auth_middleware"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/middlewares"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -30,5 +30,5 @@ func (a *Administratorzy) RegisterSubRouter(router *mux.Router) {
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", a.createNew)
 
-	r.Use(auth_middleware.NewAuthorisationMiddleware(a.l, auth_middleware.Authorizer{Level: redis.AdministratorDB}).Middleware)
+	r.Use(middlewares.NewAuthorisationMiddleware(a.l, middlewares.Authorizer{Level: redis.AdministratorDB}).Middleware)
 }

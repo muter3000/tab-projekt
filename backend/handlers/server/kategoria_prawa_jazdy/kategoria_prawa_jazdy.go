@@ -1,8 +1,8 @@
 package kategoria_prawa_jazdy
 
 import (
-	"github.com/tab-projekt-backend/auth_middleware"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/middlewares"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -28,5 +28,5 @@ func (kpj *Kategoria_prawa_jazdy) RegisterSubRouter(router *mux.Router) {
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", kpj.createNew)
-	r.Use(auth_middleware.NewAuthorisationMiddleware(kpj.l, auth_middleware.Authorizer{Level: redis.AdministratorDB}).Middleware)
+	r.Use(middlewares.NewAuthorisationMiddleware(kpj.l, middlewares.Authorizer{Level: redis.AdministratorDB}).Middleware)
 }

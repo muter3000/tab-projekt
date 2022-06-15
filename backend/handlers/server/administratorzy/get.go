@@ -15,7 +15,7 @@ func (a *Administratorzy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	var administracja []schemas.Administrator
-	err := a.db.Model(&administracja).Relation("StanowiskoAdministracyjne").Select()
+	err := a.db.Model(&administracja).Column("administratorzy.id", "pesel", "imie", "nazwisko", "login", "administracja_id").Relation("StanowiskoAdministracyjne").Select()
 	if err != nil {
 		a.l.Error("while handling get all", "path", a.path, "error", err)
 		http.Error(rw, "Error getting administracja table", http.StatusInternalServerError)
@@ -43,7 +43,7 @@ func (a *Administratorzy) getByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	administrator := schemas.Administrator{}
-	err = a.db.Model(&administrator).Where("administracja_id = ?", id).Relation("StanowiskoAdministracyjne").Select()
+	err = a.db.Model(&administrator).Column("administratorzy.id", "pesel", "imie", "nazwisko", "login", "administracja_id").Where("administracja_id = ?", id).Relation("StanowiskoAdministracyjne").Select()
 	if err != nil {
 		a.l.Error("while handling get by ID", "path", a.path, "error", err)
 		http.Error(rw, "Error getting administracja table", http.StatusBadRequest)
@@ -68,7 +68,7 @@ func (a *Administratorzy) getByPesel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	administrator := schemas.Administrator{}
-	err := a.db.Model(&administrator).Where("pesel = ?", pesel).Select()
+	err := a.db.Model(&administrator).Column("administratorzy.id", "pesel", "imie", "nazwisko", "login", "administracja_id").Where("pesel = ?", pesel).Select()
 	if err != nil {
 		a.l.Error("while handling get by ID", "path", a.path, "error", err)
 		http.Error(rw, "Error getting administracja table", http.StatusInternalServerError)

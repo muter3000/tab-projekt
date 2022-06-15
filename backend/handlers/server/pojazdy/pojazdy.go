@@ -1,8 +1,8 @@
 package pojazdy
 
 import (
-	"github.com/tab-projekt-backend/auth_middleware"
 	"github.com/tab-projekt-backend/database/redis"
+	"github.com/tab-projekt-backend/middlewares"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -28,5 +28,5 @@ func (p *Pojazdy) RegisterSubRouter(router *mux.Router) {
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", p.createNew)
-	r.Use(auth_middleware.NewAuthorisationMiddleware(p.l, auth_middleware.Authorizer{Level: redis.Administrator}).Middleware)
+	r.Use(middlewares.NewAuthorisationMiddleware(p.l, middlewares.Authorizer{Level: redis.Administrator}).Middleware)
 }

@@ -17,7 +17,7 @@ func (k *Kierowcy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	var kierowcy []schemas.Kierowca
-	err := k.db.Model(&kierowcy).Relation("Kategorie").Select()
+	err := k.db.Model(&kierowcy).Column("id", "pesel", "imie", "nazwisko", "login", "kierowca_id").Relation("Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get all", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
@@ -44,7 +44,7 @@ func (k *Kierowcy) getByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	kierowca := schemas.Kierowca{}
-	err = k.db.Model(&kierowca).Where("kierowca_id = ?", id).Relation("Kategorie").Select()
+	err = k.db.Model(&kierowca).Column("id", "pesel", "imie", "nazwisko", "login", "kierowca_id").Where("kierowca_id = ?", id).Relation("Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
@@ -69,7 +69,7 @@ func (k *Kierowcy) getByPesel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	kierowca := schemas.Kierowca{}
-	err := k.db.Model(&kierowca).Relation("Kategorie").Where("pesel = ?", pesel).Select()
+	err := k.db.Model(&kierowca).Column("id", "pesel", "imie", "nazwisko", "login", "kierowca_id").Relation("Kategorie").Where("pesel = ?", pesel).Select()
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
@@ -98,7 +98,7 @@ func (k *Kierowcy) getMe(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	kierowca := schemas.Kierowca{}
-	err = k.db.Model(&kierowca).Where("kierowca_id = ?", id).Relation("Kategorie").Select()
+	err = k.db.Model(&kierowca).Column("id", "pesel", "imie", "nazwisko", "login", "kierowca_id").Where("kierowca_id = ?", id).Relation("Kategorie").Select()
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
