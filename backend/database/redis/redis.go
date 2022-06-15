@@ -59,20 +59,21 @@ func NewAuthorizationClient(l hclog.Logger, pg *pg.DB) (*AuthorizationClient, er
 	return &AuthorizationClient{l: l, rc: rdb, pg: pg}, nil
 }
 
-func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login string, password string, level PermissionLevel) bool {
+func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login string, password string, level PermissionLevel) (string, bool) {
 	a.l.Debug("Handling session creation with", "login", login, "level", level)
-	userId := int32(0)
+	userId := int32(-1)
 	switch level {
 	case Kierowca:
 		kierowca := schemas.Kierowca{}
-		err := a.pg.Model(&kierowca).Where("login = ?", login).Select()
+		err := a.pg.Model(&kierowca).Relation("Kategorie").Where("login = ?", login).Select()
 		if err != nil {
 			a.l.Debug("err happened while reading from db", "err", err)
-			return false
+			return "", false
 		}
+
 		if err = bcrypt.CompareHashAndPassword([]byte(kierowca.Haslo), []byte(password)); err != nil {
 			a.l.Debug("bcrypt.Compare", "hash", kierowca.Haslo, "pass", password, "err", err)
-			return false
+			return "", false
 		}
 		userId = kierowca.KierowcaID
 	case Administrator:
@@ -80,16 +81,16 @@ func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login st
 		err := a.pg.Model(&administrator).Where("login = ?", login).Select()
 		if err != nil {
 			a.l.Debug("err happened while reading from db", "err", err)
-			return false
+			return "", false
 		}
 		if err = bcrypt.CompareHashAndPassword([]byte(administrator.Haslo), []byte(password)); err != nil {
 			a.l.Debug("bcrypt.Compare", "hash", administrator.Haslo, "pass", password, "err", err)
-			return false
+			return "", false
 		}
 		userId = administrator.AdministracjaID
 	case AdministratorDB:
 		if login != "adminDB" || password != os.Getenv("DB_ADMIN_PASS") {
-			return false
+			return "", false
 		}
 	}
 
@@ -109,15 +110,15 @@ func (a *AuthorizationClient) CreateUserSession(rw http.ResponseWriter, login st
 
 	jsonSession, err := json.Marshal(&s)
 	if err != nil {
-		return false
+		return "", false
 	}
 
 	err = a.rc.Set(context.Background(), sId, string(jsonSession), expirationTime).Err()
 	if err != nil {
-		return false
+		return "", false
 	}
 	a.l.Debug("Created session with", "id", sId, "level", int8(level))
-	return true
+	return sId, true
 }
 
 func (a *AuthorizationClient) InvalidateUserSession(r *http.Request) bool {
@@ -153,9 +154,13 @@ func (a *AuthorizationClient) CheckAuthorization(r *http.Request, level Permissi
 		}
 	}
 	if sId == "" {
+		sId = r.Header.Get("Session-id")
+	}
+	if sId == "" {
 		a.l.Debug("user didn't send session cookie")
 		return false, -1
 	}
+
 	value, err := a.rc.Get(context.Background(), sId).Result()
 	if err != nil {
 		a.l.Warn("getting session from redis", "err", err)

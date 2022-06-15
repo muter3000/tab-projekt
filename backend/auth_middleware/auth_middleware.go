@@ -19,20 +19,6 @@ func NewAuthorisationMiddleware(l hclog.Logger, authorizer Authorizer) *Authoriz
 
 func (ah *AuthorizationMiddleware) Middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		cookies := request.Cookies()
-		sId := ""
-		for _, c := range cookies {
-			if c.Name == "session-id" {
-				sId = c.Value
-				break
-			}
-		}
-		if sId == "" {
-			http.Error(writer, "The request could not be authorized", http.StatusUnauthorized)
-			ah.l.Info("Request didn't send session id")
-			return
-		}
-
 		_, err := ah.CheckAuthorization(request)
 		if err != nil {
 			http.Error(writer, "The request could not be authorized", http.StatusUnauthorized)

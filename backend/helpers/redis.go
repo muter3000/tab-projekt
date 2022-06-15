@@ -20,6 +20,8 @@ func GetAuthAndIDFromSession(r *http.Request, level redis.PermissionLevel) (int3
 		req.AddCookie(c)
 	}
 
+	req.Header = r.Header
+
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {

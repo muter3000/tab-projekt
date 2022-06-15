@@ -32,10 +32,21 @@ func (a *AuthHandler) CreateSession(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := a.ac.CreateUserSession(rw, userCreds.Login, userCreds.Password, redis.PermissionLevel(level))
+	sId, res := a.ac.CreateUserSession(rw, userCreds.Login, userCreds.Password, redis.PermissionLevel(level))
 	if res != true {
 		http.Error(rw, "Error creating session", http.StatusUnauthorized)
 		return
 	}
-	rw.WriteHeader(http.StatusCreated)
+
+	type jsonResponse struct {
+		SessionId string `json:"session_id"`
+	}
+	js := jsonResponse{SessionId: sId}
+	e := json.NewEncoder(rw)
+	err = e.Encode(js)
+	if err != nil {
+		http.Error(rw, "Error encoding response", http.StatusInternalServerError)
+		return
+	}
+
 }

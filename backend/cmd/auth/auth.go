@@ -47,7 +47,7 @@ func main() {
 
 	bindAddress := fmt.Sprintf(":%s", os.Getenv("PORT"))
 
-	handler := cors.AllowAll().Handler(sm)
+	handler := cors.New(cors.Options{AllowedOrigins: []string{"http://localhost:3000"}, AllowCredentials: true}).Handler(sm)
 
 	// create a new server
 	s := http.Server{
