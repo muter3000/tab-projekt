@@ -43,7 +43,7 @@ spec:
               value: "5432"
             - name: PSQL_USER
               value: admin
-          image: tabprojektcbbss/backend:1.1.0
+          image: tabprojektcbbss/backend:1.4.1
           name: backend
           ports:
             - containerPort: 5000

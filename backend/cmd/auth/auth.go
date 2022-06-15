@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +12,6 @@ import (
 	"time"
 
 	"github.com/go-pg/pg/v10/orm"
-	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"github.com/tab-projekt-backend/database/psql"
@@ -45,15 +45,14 @@ func main() {
 	sm := mux.NewRouter()
 	authHandler.RegisterSubRouter(sm)
 
-	// CORS
-	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
-
 	bindAddress := fmt.Sprintf(":%s", os.Getenv("PORT"))
+
+	handler := cors.New(cors.Options{AllowedOrigins: []string{"http://localhost:3000"}, AllowCredentials: true}).Handler(sm)
 
 	// create a new server
 	s := http.Server{
 		Addr:         bindAddress,                                      // configure the bind address
-		Handler:      ch(sm),                                           // set the default handler
+		Handler:      handler,                                          // set the default handler
 		ErrorLog:     l.StandardLogger(&hclog.StandardLoggerOptions{}), // set the logger for the server
 		ReadTimeout:  5000 * time.Millisecond,                          // max time to read request from the client
 		WriteTimeout: 10000 * time.Millisecond,                         // max time to write response to the client

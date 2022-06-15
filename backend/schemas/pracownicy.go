@@ -24,7 +24,7 @@ type Pracownik struct {
 	// required: true
 	Login string `pg:"login, unique" json:"login"`
 
-	Haslo string `pg:"haslo" json:"haslo, omitempty"`
+	Haslo string `pg:"haslo" json:"haslo,omitempty"`
 }
 
 var _ pg.BeforeInsertHook = (*Pracownik)(nil)
@@ -44,13 +44,6 @@ func (p *Pracownik) BeforeInsert(ctx context.Context) (context.Context, error) {
 	}
 	p.Haslo = string(password)
 	return ctx, nil
-}
-
-var _ pg.AfterSelectHook = (*Pracownik)(nil)
-
-func (p *Pracownik) AfterSelect(context.Context) error {
-	p.Haslo = ""
-	return nil
 }
 
 type Kierowca struct {

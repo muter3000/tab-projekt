@@ -1,6 +1,8 @@
 package kursy
 
 import (
+	"github.com/tab-projekt-backend/auth_middleware"
+	"github.com/tab-projekt-backend/database/redis"
 	"net/http"
 
 	"github.com/go-pg/pg/v10"
@@ -19,15 +21,29 @@ func NewKursy(l hclog.Logger, db *pg.DB, path string) *Kursy {
 }
 
 func (k *Kursy) RegisterSubRouter(router *mux.Router) {
+	adminMiddleware := auth_middleware.NewAuthorisationMiddleware(k.l, auth_middleware.Authorizer{Level: redis.Kierowca}).Middleware
+	kierowcaMiddleware := auth_middleware.NewAuthorisationMiddleware(k.l, auth_middleware.Authorizer{Level: redis.Kierowca}).Middleware
+
 	r := router.PathPrefix(k.path).Subrouter()
-	get := r.Methods(http.MethodGet).Subrouter()
-	get.HandleFunc("", k.getAll)
-	get.HandleFunc("/kierowca/{id:[0-9]+}", k.getByDriverID)
-	get.HandleFunc("/{id:[0-9]+}", k.getByID)
+	getAdmin := r.Methods(http.MethodGet).Subrouter()
+	getAdmin.HandleFunc("", k.getAll)
+	getAdmin.HandleFunc("/kierowca/{id:[0-9]+}", k.getByDriverID)
+	getAdmin.HandleFunc("/{id:[0-9]+}", k.getByID)
+	getAdmin.Use(adminMiddleware)
+
+	getKierowca := r.Methods(http.MethodGet).Subrouter()
+	getKierowca.HandleFunc("/me", k.getByMyID)
+	getKierowca.Use(kierowcaMiddleware)
 
 	post := r.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", k.createNew)
+	post.Use(adminMiddleware)
 
-	patch := r.Methods(http.MethodPatch).Subrouter()
-	patch.HandleFunc("/{id:[0-9]+}", k.updateExisting)
+	patchAdmin := r.Methods(http.MethodPatch).Subrouter()
+	patchAdmin.HandleFunc("/{id:[0-9]+}", k.updateExisting)
+	patchAdmin.Use(adminMiddleware)
+
+	patchKierowca := r.Methods(http.MethodPatch).Subrouter()
+	patchKierowca.HandleFunc("/me", k.updateMyExisting)
+	patchKierowca.Use(kierowcaMiddleware)
 }
