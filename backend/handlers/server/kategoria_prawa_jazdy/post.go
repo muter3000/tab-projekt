@@ -7,7 +7,7 @@ import (
 	"github.com/tab-projekt-backend/schemas"
 )
 
-func (sa *Kategoria_prawa_jazdy) createNew(rw http.ResponseWriter, r *http.Request) {
+func (sa *KategoriaPrawaJazdy) createNew(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	sa.l.Debug("handling post request", "path", sa.path)
 	kategoria := schemas.KategoriaPrawaJazdy{}
