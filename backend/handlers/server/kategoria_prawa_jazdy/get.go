@@ -9,7 +9,7 @@ import (
 	"github.com/tab-projekt-backend/schemas"
 )
 
-func (kpj *Kategoria_prawa_jazdy) getAll(rw http.ResponseWriter, _ *http.Request) {
+func (kpj *KategoriaPrawaJazdy) getAll(rw http.ResponseWriter, _ *http.Request) {
 	kpj.l.Debug("handling get all request", "path", kpj.path)
 
 	rw.Header().Add("Content-Type", "application/json")
@@ -28,7 +28,7 @@ func (kpj *Kategoria_prawa_jazdy) getAll(rw http.ResponseWriter, _ *http.Request
 	}
 }
 
-func (kpj *Kategoria_prawa_jazdy) getByID(rw http.ResponseWriter, r *http.Request) {
+func (kpj *KategoriaPrawaJazdy) getByID(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	// convert the id into an integer and return
