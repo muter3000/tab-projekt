@@ -70,6 +70,7 @@ func (k *Kierowcy) getByPesel(rw http.ResponseWriter, r *http.Request) {
 
 	kierowca := schemas.Kierowca{}
 	err := k.db.Model(&kierowca).Column("id", "pesel", "imie", "nazwisko", "login", "kierowca_id").Relation("Kategorie").Where("pesel = ?", pesel).Select()
+
 	if err != nil {
 		k.l.Error("while handling get by ID", "path", k.path, "error", err)
 		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
