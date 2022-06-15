@@ -22,7 +22,6 @@ func NewMarki(l hclog.Logger, db *pg.DB, path string) *Marki {
 
 func (m *Marki) RegisterSubRouter(router *mux.Router) {
 	adminMiddleware := middlewares.NewAuthorisationMiddleware(m.l, middlewares.Authorizer{Level: redis.Administrator}).Middleware
-
 	r := router.PathPrefix(m.path).Subrouter()
 	get := r.Methods(http.MethodGet).Subrouter()
 	get.HandleFunc("", m.getAll)

@@ -112,3 +112,32 @@ func (k *Kierowcy) getMe(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (k *Kierowcy) getMe(rw http.ResponseWriter, r *http.Request) {
+
+	k.l.Debug("handling get by self request", "path", k.path)
+
+	rw.Header().Add("Content-Type", "application/json")
+
+	id, err := helpers.GetAuthAndIDFromSession(r, redis.Kierowca)
+	if err != nil {
+		k.l.Warn("during getMe request", "err", err)
+		http.Error(rw, "No session currently active", http.StatusUnauthorized)
+		return
+	}
+
+	kierowca := schemas.Kierowca{}
+	err = k.db.Model(&kierowca).Where("kierowca_id = ?", id).Relation("Kategorie").Select()
+	if err != nil {
+		k.l.Error("while handling get by ID", "path", k.path, "error", err)
+		http.Error(rw, "Error getting kierowcy table", http.StatusInternalServerError)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(rw).Encode(kierowca)
+	if err != nil {
+		http.Error(rw, "Error encoding to json", http.StatusInternalServerError)
+		return
+	}
+}
