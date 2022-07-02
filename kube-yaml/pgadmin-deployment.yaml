@@ -34,7 +34,7 @@ spec:
             - name: PGADMIN_CONFIG_FILE_LOG_LEVEL
               value: "50"
             - name: PGADMIN_CONFIG_SERVER_MODE
-              value: "False"
+              value: "True"
             - name: PGADMIN_DEFAULT_EMAIL
               value: pgadmin4@pgadmin.org
             - name: PGADMIN_DEFAULT_PASSWORD
@@ -55,17 +55,10 @@ spec:
               value: "'/var/lib/pgadmin4/sessions'"
             - name: PGADMIN_CONFIG_STORAGE_DIR
               value: "'/var/lib/pgadmin4/storage'"
-          image: dpage/pgadmin4:6.10
+          image: dpage/pgadmin4
           name: pgadmin-container
-          volumeMounts:
-            - mountPath: /var/lib/pgadmin4
-              name: pgadmin
           ports:
             - containerPort: 80
           resources: { }
       restartPolicy: Always
-      volumes:
-        - name: pgadmin
-          persistentVolumeClaim:
-            claimName: pgadmin-claim0
 status: { }
