@@ -17,7 +17,7 @@ func (k *Kursy) createNew(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Wrong parameters passed", http.StatusBadRequest)
 		return
 	}
-	_, err = k.db.Model(&kurs).Returning("*", &kurs).Insert()
+	_, err = k.db.Model(&kurs).Relation("Trasa").Relation("Kierowca").Relation("Pojazd").Relation("Pojazd.Marka").Relation("Kierowca.Kategorie").Returning("*", &kurs).Insert()
 	if err != nil {
 		k.l.Error("marshaling", "err", err)
 		http.Error(rw, "Inserting into database", http.StatusInternalServerError)

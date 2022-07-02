@@ -54,7 +54,7 @@ services:
     depends_on:
       - postgres
   backend:
-    image: tabprojektcbbss/backend:1.4.1
+    image: tabprojektcbbss/backend:1.6.0
     build:
       context: ./backend
       dockerfile: ./docker/server/Dockerfile
