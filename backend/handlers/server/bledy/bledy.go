@@ -1,9 +1,10 @@
 package bledy
 
 import (
+	"net/http"
+
 	"github.com/tab-projekt-backend/database/redis"
 	"github.com/tab-projekt-backend/middlewares"
-	"net/http"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/gorilla/mux"
@@ -21,13 +22,18 @@ func NewBledy(l hclog.Logger, db *pg.DB, path string) *Bledy {
 }
 
 func (b *Bledy) RegisterSubRouter(router *mux.Router) {
-	r := router.PathPrefix(b.path).Subrouter()
-	get := r.Methods(http.MethodGet).Subrouter()
+	rGetAndDelete := router.PathPrefix(b.path).Subrouter()
+	get := rGetAndDelete.Methods(http.MethodGet).Subrouter()
 	get.HandleFunc("", b.getAll)
 	get.HandleFunc("/{id:[0-9]+}", b.getByID)
 
-	post := r.Methods(http.MethodPost).Subrouter()
+	rPost := router.PathPrefix(b.path).Subrouter()
+	post := rPost.Methods(http.MethodPost).Subrouter()
 	post.HandleFunc("", b.createNew)
 
-	r.Use(middlewares.NewAuthorisationMiddleware(b.l, middlewares.Authorizer{Level: redis.Kierowca}).Middleware)
+	delete := rGetAndDelete.Methods(http.MethodDelete).Subrouter()
+	delete.HandleFunc("/{id:[0-9]+}", b.deleteByID)
+
+	rPost.Use(middlewares.NewAuthorisationMiddleware(b.l, middlewares.Authorizer{Level: redis.Kierowca}).Middleware)
+	rGetAndDelete.Use(middlewares.NewAuthorisationMiddleware(b.l, middlewares.Authorizer{Level: redis.AdministratorDB}).Middleware)
 }
