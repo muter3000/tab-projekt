@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: backend
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: backend
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 100%
+  template:
+    metadata:
+      labels:
+        io.kompose.service: backend
+    spec:
+      containers:
+        - env:
+            - name: AUTH_HOST
+              value: auth
+            - name: AUTH_PORT
+              value: "6000"
+            - name: LOG_LEVEL
+              value: "2"
+            - name: PORT
+              value: "5000"
+            - name: PSQL_DB
+              value: postgres
+            - name: PSQL_HOST
+              value: postgres-postgresql
+            - name: PSQL_PASSWORD
+              value: {{ .Values.postgres.password }}
+            - name: PSQL_PORT
+              value: "5432"
+            - name: PSQL_USER
+              value: postgres
+          image: tabprojektcbbss/backend:1.6.1
+          name: backend
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              cpu: 250m
+              memory: 512Mi
+      restartPolicy: Always
+status: { }
